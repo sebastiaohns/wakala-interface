@@ -14,28 +14,29 @@
 
 2. Design: [@ChegeMartinx](https://github.com/ChegeMartinx)
 
-3. Front end:
+3. Developers:
 
-- [@George-Kihara](https://github.com/George-Kihara)
-- [@SamGithiaka](https://github.com/samgithiaka)
-
-4. Backend/smart contracts: 
-- [@Muhani99](https://github.com/Muhani99)
+- [@AbijahKaj](https://github.com/AbijahKaj)
 - [@Alphonce-Mutebi](https://github.com/Alphonce-Mutebi)
+- [@Kapersky1337](https://github.com/Kapersky1337)
+- [@Muhani99](https://github.com/Muhani99)
+- [@onumengine](https://github.com/onumengine)
+- [@sebastiaohns](https://github.com/sebastiaohns)
+
 
 ## 3. Workflow
-1. The [story](https://github.com/Kukuza/tech-prototype/labels/story) issues contain wireframes, designs, Figma links, and context/acceptance criteria.
+1. The [story](https://github.com/Wakala/wakala-interface/labels/story) issues contain wireframes, designs, Figma links, and context/acceptance criteria.
 
 2. Progress is tracked on the [Kanban board project](https://github.com/WakalaDAO/wakala-interface/projects/3).
 
 3. Keep your PRs small. PRs require 3 reviewers.
 
-4. Never close an issue, just reassign.
+4. After you completed an issue/story, assign it to [@SteffenKrogmann](https://github.com/SteffenKrogmann) and move it to the respective "Testing" column on the [Kanban board](https://github.com/WakalaDAO/wakala-interface/projects/3).
 
-5. After you completed an issue/story, assign it to [@SteffenKrogmann](https://github.com/SteffenKrogmann) and move it to the respective "Testing" column on the [Kanban board](https://github.com/WakalaDAO/wakala-interface/projects/3).
+5. Never close an issue, just reassign.
 
 6. If you have a question/issue related to product/concept, file an issue for [@SteffenKrogmann](https://github.com/SteffenKrogmann).
 
-7. If you need a design change, file an issue for both, [@ChegeMartinx](https://github.com/ChegeMartinx) and [@SteffenKrogmann](https://github.com/SteffenKrogmann).
+7. If you need a design change, file an issue for [@ChegeMartinx](https://github.com/ChegeMartinx).
 
-8. For each API, file an issue, assign it to [@Muhani99](https://github.com/Muhani99) and tag it [api](https://github.com/WakalaDAO/wakala-interface/labels/api).
+8. For issues related to smart contracts and APIs, file an issue for [@Muhani99](https://github.com/Muhani99) and tag it [api](https://github.com/WakalaDAO/wakala-interface/labels/api).
