@@ -31,12 +31,14 @@
 
 3. Keep your PRs small. PRs require 3 reviewers.
 
-4. After you completed an issue/story, assign it to [@SteffenKrogmann](https://github.com/SteffenKrogmann) and move it to the respective "Testing" column on the [Kanban board](https://github.com/WakalaDAO/wakala-interface/projects/3).
+4. For finished UIs: Move them to column "4. Feedback | Testing" on the [Kanban board](https://github.com/WakalaDAO/wakala-interface/projects/3) and assign them to [@ChegeMartinx](https://github.com/ChegeMartinx) for testing. 
 
-5. Never close an issue, just reassign.
+5. For integrated UIs/stories: Move them to column "6. Testing" on the [Kanban board](https://github.com/WakalaDAO/wakala-interface/projects/3) and assign them to @SteffenKrogmann](https://github.com/SteffenKrogmann) for testing.
 
-6. If you have a question/issue related to product/concept, file an issue for [@SteffenKrogmann](https://github.com/SteffenKrogmann).
+6. Never close an issue, just reassign.
 
-7. If you need a design change, file an issue for [@ChegeMartinx](https://github.com/ChegeMartinx).
+7. If you have a question/issue related to product/concept, file an issue for [@SteffenKrogmann](https://github.com/SteffenKrogmann).
 
-8. For issues related to smart contracts and APIs, file an issue for [@Muhani99](https://github.com/Muhani99) and tag it [api](https://github.com/WakalaDAO/wakala-interface/labels/api).
+8. If you need a design change, file an issue for [@ChegeMartinx](https://github.com/ChegeMartinx).
+
+9. For issues related to smart contracts and APIs, file an issue for [@Muhani99](https://github.com/Muhani99) and tag it [api](https://github.com/WakalaDAO/wakala-interface/labels/api).
