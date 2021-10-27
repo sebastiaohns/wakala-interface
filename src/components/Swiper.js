@@ -18,24 +18,14 @@ import {
 //    Button
 } from 'react-native';
 import {SLIDER_BUTTON} from "../assets/images";
-import appTheme from "../consts/theme";
-import CircularProgress from "./CircularProgress";
+import appTheme, {COLORS} from "../consts/theme";
+import {LinearGradient} from "expo-linear-gradient";
 //import Button from './Button';
+import { Feather } from "@expo/vector-icons";
+import ProgressCircle from "./ProgressCircle";
 
 // Detect screen width and height
 const { width, height } = Dimensions.get('window');
-
-class Button extends Component {
-    render({ onPress } = this.props) {
-        return (
-            <TouchableOpacity onPress={onPress}>
-                <View style={styles.button}>
-                    <Image source={SLIDER_BUTTON} style={styles.buttonImage} />
-                </View>
-            </TouchableOpacity>
-        );
-    }
-}
 
 export default class Swiper extends Component {
 
@@ -256,13 +246,23 @@ export default class Swiper extends Component {
         const lastScreen = this.state.index === this.state.total - 1;
         return (
             <View pointerEvents="box-none" style={[styles.buttonWrapper, styles.fullScreen]}>
-                {lastScreen
-                    // Show this button on the last screen
-                    // TODO: Add a handler that would send a user to your app after onboarding is complete
-                    ? <CircularProgress radius={24} percent={Math.floor((1+this.state.index)/this.state.total * 100)} text="Start Now" onPress={() => this.props.navigation.navigate("Signup")} />
-                    // Or this one otherwise
-                    : <CircularProgress radius={24} percent={Math.floor((1+this.state.index)/this.state.total * 100)} text="Continue" onPress={() => this.swipe()} />
-                }
+                <TouchableOpacity onPress={lastScreen ? () => this.props.navigation.navigate("Signup") : () => this.swipe()}>
+                    <ProgressCircle
+                        value={(1+this.state.index)/this.state.total}
+                        size={58}
+                        thickness={3}
+                        color={COLORS.primary}
+                        unfilledColor={COLORS.backgroundColor}
+                        animationMethod="spring"
+                        animationConfig={{ speed: 4 }}>
+                        <LinearGradient
+                            colors={COLORS.buttonGradient}
+                            style={styles.button}>
+                            <Feather name="arrow-right" size={25} color="white" />
+                        </LinearGradient>
+                    </ProgressCircle>
+                </TouchableOpacity>
+
             </View>
         );
     }
@@ -338,22 +338,14 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
-    // Button container
     button: {
-        //borderRadius: 50,         // Rounded border
-        //borderWidth: 2,           // 2 point border widht
-        //borderColor: '#FFFFFF',   // White colored border
-        //paddingHorizontal: 50,    // Horizontal padding
-        //paddingVertical: 10,      // Vertical padding
+        width: 46,
+        height: 46,
+        borderRadius: 23,
+        justifyContent: 'center',
+        alignItems: 'center',
+
     },
-    buttonImage: {
-        width: 100,
-        height: 100,
-        borderWidth: 10,
-        borderRadius: 500,
-        borderColor: 'grey'
-    },
-    // Button text
     text: {
         color: '#FFFFFF',
         fontWeight: 'bold',
