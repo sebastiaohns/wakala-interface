@@ -14,14 +14,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import { HOME_EMPTY } from "../../assets/images";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: "#E5E5E5" }} />
 
       <SafeAreaView style={styles.container}>
         <View style={styles.menu}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <Ionicons name="list-outline" size={38} color={COLORS.primary} />
           </TouchableOpacity>
         </View>
