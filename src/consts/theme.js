@@ -8,6 +8,7 @@ export const COLORS = {
 
   mainGray: "#B3B3B3",
   backgroundColor: "#E5E5E5",
+  buttonGradient: ["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"],
 
   // colors
   black: "#181725",
