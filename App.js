@@ -25,8 +25,6 @@ import SignUpScreen from "./src/screens/Auth";
 import CustomDrawer from "./src/components/CustomDrawer";
 import { COLORS, SIZES } from "./src/consts/theme";
 
-import Other from "./src/screens/Home/other";
-
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -62,11 +60,6 @@ const Home = () => {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Drawer.Screen
-        name="Other"
-        component={Other}
-        options={{ headerShown: false }}
-      />
     </Drawer.Navigator>
   );
 };
@@ -83,7 +76,7 @@ const App = () => {
     Rubik_700Bold,
   });
 
-  const [isAuthenticated, setIsAuthenticated] = React.useState(true);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const handleSignIn = () => {
     // TODO implement real sign in mechanism
