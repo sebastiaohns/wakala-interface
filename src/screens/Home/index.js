@@ -1,20 +1,25 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Image,
   View,
   Text,
+  Platform,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
+import RequestCard from "../../components/RequestCard";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import { HOME_EMPTY } from "../../assets/images";
 
 const HomeScreen = ({ navigation }) => {
+  const [isEmpty, setIsEmpty] = useState(false);
+
   return (
     <Fragment>
       <SafeAreaView style={{ flex: 0, backgroundColor: "#E5E5E5" }} />
@@ -26,13 +31,39 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.wrapper}>
-          <Image source={HOME_EMPTY} style={styles.image} />
-          <Text style={styles.text}>
-            All requests have been fullfilled. Take a break, get some air, check
-            back in later
-          </Text>
-        </View>
+        {isEmpty ? (
+          <View style={styles.wrapper}>
+            <Image source={HOME_EMPTY} style={styles.image} />
+            <Text style={styles.text}>
+              All requests have been fullfilled. Take a break, get some air,
+              check back in later
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={{
+              width: "100%",
+              flex: 1,
+              backgroundColor: "#E5E5E5",
+            }}
+            contentContainerStyle={{
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 20,
+            }}
+          >
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+            <RequestCard />
+          </ScrollView>
+        )}
 
         <View style={navStyles.nav}>
           <TouchableOpacity style={navStyles.buttonShadow}>
@@ -78,7 +109,9 @@ const styles = StyleSheet.create({
 
   menu: {
     width: "100%",
-    padding: 30,
+    paddingLeft: 30,
+    paddingTop: Platform.OS == "android" ? 30 : 10,
+    paddingBottom: 10,
     justifyContent: "flex-start",
     backgroundColor: "#E5E5E5",
   },
@@ -87,8 +120,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 30,
     backgroundColor: "#E5E5E5",
+    paddingHorizontal: 30,
   },
 
   image: {
