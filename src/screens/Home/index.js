@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Image,
   View,
@@ -7,7 +7,8 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  ScrollView,
+  LayoutAnimation,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,9 +17,25 @@ import { LinearGradient } from "expo-linear-gradient";
 import RequestCard from "../../components/RequestCard";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import { HOME_EMPTY } from "../../assets/images";
+import rawData from "../../utils/DepositRequestData";
 
 const HomeScreen = ({ navigation }) => {
   const [isEmpty, setIsEmpty] = useState(false);
+  const [depositRequestData, setDepositRequestData] = useState([]);
+
+  function getDepositRequestData() {
+    setDepositRequestData(rawData);
+  }
+
+  function removeDepositRequestItem(id) {
+    var newData = depositRequestData.filter((item) => item._id != id);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    setDepositRequestData(newData);
+  }
+
+  useEffect(() => {
+    getDepositRequestData();
+  }, []);
 
   return (
     <Fragment>
@@ -40,29 +57,28 @@ const HomeScreen = ({ navigation }) => {
             </Text>
           </View>
         ) : (
-          <ScrollView
+          <View
             style={{
-              width: "100%",
               flex: 1,
               backgroundColor: "#E5E5E5",
-            }}
-            contentContainerStyle={{
               justifyContent: "center",
               alignItems: "center",
-              padding: 20,
             }}
           >
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-            <RequestCard />
-          </ScrollView>
+            <FlatList
+              data={depositRequestData}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <RequestCard
+                  _id={item._id}
+                  amount={item.amount}
+                  stars={item.stars}
+                  rating={item.rating}
+                  deleteItem={removeDepositRequestItem}
+                />
+              )}
+            />
+          </View>
         )}
 
         <View style={navStyles.nav}>
