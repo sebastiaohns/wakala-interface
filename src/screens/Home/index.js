@@ -20,17 +20,25 @@ import { HOME_EMPTY } from "../../assets/images";
 import rawData from "../../utils/DepositRequestData";
 
 const HomeScreen = ({ navigation }) => {
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(true);
   const [depositRequestData, setDepositRequestData] = useState([]);
 
   function getDepositRequestData() {
     setDepositRequestData(rawData);
+
+    if (rawData.length >= 1) {
+      setIsEmpty(false);
+    }
   }
 
   function removeDepositRequestItem(id) {
     var newData = depositRequestData.filter((item) => item._id != id);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     setDepositRequestData(newData);
+
+    if (newData.length < 1) {
+      setIsEmpty(true);
+    }
   }
 
   useEffect(() => {
