@@ -17,13 +17,13 @@ import {
   Rubik_700Bold,
 } from "@expo-google-fonts/rubik";
 
-import { Button } from "react-native";
-
 import OnboardingScreen from "./src/screens/Onboarding";
 import HomeScreen from "./src/screens/Home";
 import SignUpScreen from "./src/screens/Auth";
 import CustomDrawer from "./src/components/CustomDrawer";
 import { COLORS, SIZES } from "./src/consts/theme";
+import VerifyNumber from "./src/screens/Auth/VerifyNumber";
+import ToC from "./src/screens/Auth/ToC";
 
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -107,6 +107,8 @@ const App = () => {
               <RootStack.Screen name="Signup">
                 {(props) => <SignUpScreen {...props} onSignIn={handleSignIn} />}
               </RootStack.Screen>
+              <RootStack.Screen name="VerifyNumber" component={VerifyNumber} />
+              <RootStack.Screen name="ToC" component={ToC} />
             </>
           )}
         </RootStack.Navigator>
