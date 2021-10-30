@@ -76,7 +76,7 @@ const App = () => {
     Rubik_700Bold,
   });
 
-  const [isAuthenticated, setIsAuthenticated] = React.useState(true);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const handleSignIn = () => {
     // TODO implement real sign in mechanism
