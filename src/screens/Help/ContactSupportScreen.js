@@ -4,9 +4,9 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { Ionicons } from '@expo/vector-icons';
 
 //components
-import Screen from './../components/Screen';
+import Screen from '/src/components/Screen';
 //config
-import theme from '../consts/theme';
+import theme from '/src/consts/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../../consts/theme';
 
