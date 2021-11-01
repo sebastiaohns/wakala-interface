@@ -25,7 +25,11 @@ export const COLORS = {
   tertiary: "#7C7C7C",
   realBlack: "#000000",
   buttonGray: "#E6E6E6",
+
+  line: '#444444',
   lightGrey: '#F3EBFC',
+  keypad: '#1C1939',
+
 
   //Menu
   homeMenu: "rgba(162, 197, 93, 0.15)",
