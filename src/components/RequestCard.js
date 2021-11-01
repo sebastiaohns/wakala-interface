@@ -218,28 +218,3 @@ const styles = StyleSheet.create({
 });
 
 export default RequestCard;
-
-{
-  /* <Swipeable
-      renderLeftActions={swipeLeftContent}
-      overshootLeft={false}
-      renderRightActions={swipeRightContent}
-      overshootRight={false}
-    >
-      
-        <LinearGradient
-          colors={[
-            "rgba(255, 140, 161, 0.08)",
-            "rgba(252, 207, 47, 0.08)",
-            "rgba(255, 255, 255, 0.08)",
-            "rgba(248, 48, 180, 0.08)",
-            "rgba(47, 68, 252, 0.08)",
-          ]}
-          start={[0, 1]}
-          end={[1, 0]}
-          style={styles.container}
-        >
-          
-      </TouchableOpacity>
-    </Swipeable> */
-}
