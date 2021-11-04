@@ -4,3 +4,5 @@ export const SLIDER_IMAGE_002 = require("./slider-003.png");
 export const SLIDER_IMAGE_003 = require("./slider-002.png");
 export const SLIDER_IMAGE_004 = require("./slider-004.png");
 export const HOME_EMPTY = require("./home_empty.png");
+export const CASH = require("./cash.png");
+export const MPESA = require("./mpesa.png");

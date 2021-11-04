@@ -100,7 +100,10 @@ const HomeScreen = ({ navigation }) => {
               <Text style={navStyles.buttonText}>Send</Text>
             </LinearGradient>
           </TouchableOpacity>
-          <TouchableOpacity style={navStyles.buttonShadow}>
+          <TouchableOpacity
+            style={navStyles.buttonShadow}
+            onPress={() => navigation.navigate("Select Top up Withdraw")}
+          >
             <LinearGradient
               colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
               start={[1, 0]}
