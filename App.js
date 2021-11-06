@@ -27,6 +27,12 @@ import ToC from "./src/screens/Auth/ToC";
 import AccountAddress from "./src/screens/Settings/AccountAddress";
 import PinDoNotMatch from "./src/screens/Settings/AccountAddress";
 import ContactSupportScreen from "./src/screens/Help/ContactSupportScreen";
+import SelectTopUpWithdraw from "./src/screens/AddDeposit/SelectTopUpWithdraw";
+import CashMpesa from "./src/screens/AddDeposit/CashMpesa";
+import AddFunds from "./src/screens/AddDeposit/AddFunds";
+import ConfirmFunds from "./src/screens/AddDeposit/ConfirmFunds";
+import SendMpesa from "./src/screens/AddDeposit/SendMpesa";
+import Success from "./src/screens/AddDeposit/Success";
 
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -121,6 +127,36 @@ const App = () => {
           <RootStack.Screen
             name="Home"
             component={Home}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Select Top up Withdraw"
+            component={SelectTopUpWithdraw}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Cash Mpesa"
+            component={CashMpesa}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Add Funds"
+            component={AddFunds}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Confirm Funds"
+            component={ConfirmFunds}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Send Mpesa"
+            component={SendMpesa}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Success"
+            component={Success}
             options={{ headerShown: false }}
           />
         </RootStack.Navigator>
