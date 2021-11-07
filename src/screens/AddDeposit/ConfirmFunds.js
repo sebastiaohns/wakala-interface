@@ -10,8 +10,24 @@ import {
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import SwipeButton from "../../components/SwipeButton";
+import Modal from "../../components/Modal";
+import { SIZES } from "../../consts/theme";
+
+import { SHARED } from "../../assets/images";
 
 const ConfirmFunds = ({ navigation }) => {
+  const modalRef = React.useRef();
+
+  const openModal = () => {
+    modalRef.current?.openModal();
+  };
+
+  const closeModal = () => {
+    modalRef.current?.closeModal();
+    navigation.navigate("Send Mpesa");
+  };
+
   return (
     <Fragment>
       <SafeAreaView
@@ -28,6 +44,7 @@ const ConfirmFunds = ({ navigation }) => {
           <View
             style={{
               flex: 1,
+              marginBottom: 50,
               marginHorizontal: 30,
               justifyContent: "space-between",
             }}
@@ -73,23 +90,29 @@ const ConfirmFunds = ({ navigation }) => {
                 </View>
               </LinearGradient>
             </View>
-
-            <TouchableOpacity
-              style={navStyles.buttonShadow}
-              onPress={() => navigation.navigate("Send Mpesa")}
-            >
-              <LinearGradient
-                colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-                start={[1, 0]}
-                end={[0, 1]}
-                style={navStyles.button}
-              >
-                <Text style={navStyles.buttonText}>Swipe to confirm</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <SwipeButton handleAction={openModal} />
           </View>
         </LinearGradient>
       </SafeAreaView>
+      <Modal
+        ref={modalRef}
+        style={{ height: 550 }}
+        content={
+          <View style={modal.container}>
+            <Image source={SHARED} style={modal.image} />
+            <Text style={modal.title}>Request Shared</Text>
+            <Text style={modal.text}>
+              We shared your deposit request with the agent community. We will
+              notify you once an agent has answered your request. It can take up
+              to 4 minutes. Click OK to exit this page.
+            </Text>
+
+            <TouchableOpacity onPress={closeModal}>
+              <Text style={modal.button}>Okay</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </Fragment>
   );
 };
@@ -177,6 +200,47 @@ const navStyles = StyleSheet.create({
     fontFamily: "Rubik_500Medium",
     textAlign: "center",
     color: "#FFF",
+  },
+});
+
+const modal = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+
+  image: {
+    height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 16,
+    fontFamily: "Rubik_500Medium",
+    color: "#333333",
+    lineHeight: 24,
+    textAlign: "center",
+    marginBottom: 26,
+  },
+
+  text: {
+    fontSize: 14,
+    fontFamily: "Rubik_400Regular",
+    color: "#333333",
+    lineHeight: 21,
+    textAlign: "center",
+    marginBottom: 58,
+  },
+
+  button: {
+    fontSize: 20,
+    fontFamily: "Rubik_500Medium",
+    color: "#133FDB",
+    lineHeight: 24,
+    textAlign: "center",
   },
 });
 

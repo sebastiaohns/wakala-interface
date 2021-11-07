@@ -16,6 +16,7 @@ import {
   Rubik_600SemiBold,
   Rubik_700Bold,
 } from "@expo-google-fonts/rubik";
+import { DMSans_700Bold } from "@expo-google-fonts/dm-sans";
 
 import OnboardingScreen from "./src/screens/Onboarding";
 import HomeScreen from "./src/screens/Home";
@@ -69,21 +70,9 @@ const Home = () => {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Drawer.Screen
-        name="Account Address"
-        component={AccountAddress}
-        // options={{ headerShown: true }}
-      />
-      <Drawer.Screen
-        name="Pin"
-        component={PinDoNotMatch}
-        // options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="Support"
-        component={ContactSupportScreen}
-        // options={{ headerShown: false }}
-      />
+      <Drawer.Screen name="Account Address" component={AccountAddress} />
+      <Drawer.Screen name="Pin" component={PinDoNotMatch} />
+      <Drawer.Screen name="Support" component={ContactSupportScreen} />
     </Drawer.Navigator>
   );
 };
@@ -98,6 +87,7 @@ const App = () => {
     Rubik_500Medium,
     Rubik_600SemiBold,
     Rubik_700Bold,
+    DMSans_700Bold,
   });
 
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);

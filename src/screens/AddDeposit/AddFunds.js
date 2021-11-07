@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
 import { FONTS, SIZES, COLORS } from "../../consts/theme";
+import KeyPad from "../../components/KeyPad";
 
 const AddFunds = ({ navigation }) => {
   const refInput2 = useRef();
@@ -75,8 +76,9 @@ const AddFunds = ({ navigation }) => {
         >
           <View
             style={{
-              marginHorizontal: 30,
               flex: 1,
+              marginBottom: 50,
+              marginHorizontal: 30,
               justifyContent: "space-around",
             }}
           >
@@ -87,87 +89,7 @@ const AddFunds = ({ navigation }) => {
               <Feather name="chevron-left" size={32} color="#4840BB" />
             </TouchableOpacity>
 
-            <View>
-              <View>
-                <Text style={styles.title}>Ksh 1,000</Text>
-              </View>
-              {/* First row */}
-              <View style={styles.rowst}>
-                <TouchableOpacity style={{ position: "absolute", left: 0 }}>
-                  <Text onPress={() => handleChange("1")} style={styles.keypad}>
-                    1
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text onPress={() => handleChange("2")} style={styles.keypad}>
-                    2
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ position: "absolute", right: 0 }}>
-                  <Text onPress={() => handleChange("3")} style={styles.keypad}>
-                    3
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* second row */}
-              <View style={styles.rowst}>
-                <TouchableOpacity style={{ position: "absolute", left: 0 }}>
-                  <Text onPress={() => handleChange("4")} style={styles.keypad}>
-                    4
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text onPress={() => handleChange("5")} style={styles.keypad}>
-                    5
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ position: "absolute", right: 0 }}>
-                  <Text onPress={() => handleChange("6")} style={styles.keypad}>
-                    6
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* third row */}
-              <View style={styles.rowst}>
-                <TouchableOpacity style={{ position: "absolute", left: 0 }}>
-                  <Text onPress={() => handleChange("7")} style={styles.keypad}>
-                    7
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text onPress={() => handleChange("8")} style={styles.keypad}>
-                    8
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ position: "absolute", right: 0 }}>
-                  <Text onPress={() => handleChange("9")} style={styles.keypad}>
-                    9
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Fourth  row*/}
-              <View style={styles.rowst}>
-                <TouchableOpacity style={{ position: "absolute", left: 0 }}>
-                  <Text onPress={() => handleChange("0")} style={styles.keypad}>
-                    1
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text onPress={() => handleChange("0")} style={styles.keypad}>
-                    0
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleClear()}
-                  style={{ position: "absolute", right: 0 }}
-                >
-                  <Image source={require("../../assets/images/cross.png")} />
-                </TouchableOpacity>
-              </View>
-            </View>
+            <KeyPad />
 
             <TouchableOpacity
               style={navStyles.buttonShadow}
