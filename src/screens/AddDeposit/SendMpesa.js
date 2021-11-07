@@ -11,8 +11,24 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import SwipeButton from "../../components/SwipeButton";
+import Modal from "../../components/Modal";
+import { SIZES } from "../../consts/theme";
+
+import { BORED } from "../../assets/images";
 
 const SendMpesa = ({ navigation }) => {
+  const modalRef = React.useRef();
+
+  const openModal = () => {
+    modalRef.current?.openModal();
+  };
+
+  const closeModal = () => {
+    modalRef.current?.closeModal();
+    navigation.navigate("Success");
+  };
+
   return (
     <Fragment>
       <SafeAreaView
@@ -30,7 +46,6 @@ const SendMpesa = ({ navigation }) => {
             style={{
               marginHorizontal: 30,
               flex: 1,
-              justifyContent: "space-around",
             }}
           >
             <TouchableOpacity
@@ -41,10 +56,14 @@ const SendMpesa = ({ navigation }) => {
             </TouchableOpacity>
 
             <View>
-              <View style={styles.iconContainer}>
-                <Ionicons name="md-paper-plane-sharp" size={20} color="white" />
-              </View>
               <View style={styles.titleContainer}>
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name="md-paper-plane-sharp"
+                    size={20}
+                    color="white"
+                  />
+                </View>
                 <Text style={styles.title}>Send M-PESA now </Text>
               </View>
               <View>
@@ -68,25 +87,13 @@ const SendMpesa = ({ navigation }) => {
               <View>
                 <Text style={styles.cardSubTitle}>To</Text>
                 <Text style={styles.cardTitle}>+254 705 124 767</Text>
-              </View>
-              <View style={styles.copyContainer}>
-                <Text style={styles.copyText}>Copy</Text>
+                <View style={styles.copyContainer}>
+                  <Text style={styles.copyText}>Copy</Text>
+                </View>
               </View>
             </View>
 
-            <TouchableOpacity
-              style={navStyles.buttonShadow}
-              onPress={() => navigation.navigate("Success")}
-            >
-              <LinearGradient
-                colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-                start={[1, 0]}
-                end={[0, 1]}
-                style={navStyles.button}
-              >
-                <Text style={navStyles.buttonText}>Swipe to confirm</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <SwipeButton handleAction={openModal} />
             <TouchableOpacity
               style={{ marginTop: 30 }}
               onPress={() => navigation.goBack()}
@@ -98,6 +105,24 @@ const SendMpesa = ({ navigation }) => {
           </View>
         </LinearGradient>
       </SafeAreaView>
+      <Modal
+        ref={modalRef}
+        style={{ height: 500 }}
+        content={
+          <View style={modal.container}>
+            <Image source={BORED} style={modal.image} />
+            <Text style={modal.title}>Thank you!</Text>
+            <Text style={modal.text}>
+              After your agents confirms of M-PESA payment receipt. Your cUSD
+              will be deposited to your wallet.
+            </Text>
+
+            <TouchableOpacity onPress={closeModal}>
+              <Text style={modal.button}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </Fragment>
   );
 };
@@ -113,6 +138,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 
+  titleContainer: {
+    flexDirection: "row",
+  },
+
   iconContainer: {
     width: 40,
     height: 32,
@@ -121,6 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
+    marginRight: 15,
   },
 
   title: {
@@ -139,11 +169,14 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 230,
+    height: 300,
     width: "100%",
     borderRadius: 16,
     backgroundColor: "#FFF",
     padding: 12,
+    justifyContent: "space-around",
+    paddingVertical: 40,
+    marginBottom: 50,
   },
 
   cardSubTitle: {
@@ -199,6 +232,48 @@ const navStyles = StyleSheet.create({
     fontFamily: "Rubik_500Medium",
     textAlign: "center",
     color: "#FFF",
+  },
+});
+
+const modal = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+
+  image: {
+    height: 70,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+    marginTop: 50,
+  },
+
+  title: {
+    fontSize: 16,
+    fontFamily: "Rubik_500Medium",
+    color: "#333333",
+    lineHeight: 24,
+    textAlign: "center",
+    marginBottom: 26,
+  },
+
+  text: {
+    fontSize: 14,
+    fontFamily: "Rubik_400Regular",
+    color: "#333333",
+    lineHeight: 21,
+    textAlign: "center",
+    marginBottom: 58,
+  },
+
+  button: {
+    fontSize: 20,
+    fontFamily: "Rubik_500Medium",
+    color: "#133FDB",
+    lineHeight: 24,
+    textAlign: "center",
   },
 });
 

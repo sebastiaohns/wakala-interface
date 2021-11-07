@@ -13,8 +13,12 @@ import { Feather } from "@expo/vector-icons";
 
 import { CASH, MPESA } from "../../assets/images";
 import { SIZES } from "../../consts/theme";
+import Banner from "../../components/Banner";
+
+import { MODEL } from "../../assets/images";
 
 const CashMpesa = ({ navigation }) => {
+  const bannerRef = React.useRef();
   return (
     <Fragment>
       <SafeAreaView
@@ -55,7 +59,10 @@ const CashMpesa = ({ navigation }) => {
                   <Text style={styles.subtitle}>Deposit funds using mpesa</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => bannerRef.current?.openBanner()}
+              >
                 <View style={styles.icon}>
                   <Image source={CASH} style={styles.image} />
                 </View>
@@ -70,6 +77,29 @@ const CashMpesa = ({ navigation }) => {
           </View>
         </LinearGradient>
       </SafeAreaView>
+      <Banner
+        ref={bannerRef}
+        style={{ height: 350 }}
+        content={
+          <View style={banner.container}>
+            <Image source={MODEL} style={banner.image} />
+            <Text style={banner.title}>Coming soon</Text>
+            <Text style={banner.text}>
+              Stay put, we are soon adding cash option.
+            </Text>
+
+            <TouchableOpacity
+              style={{
+                width: 100,
+                alignSelf: "center",
+              }}
+              onPress={() => bannerRef.current?.closeBanner()}
+            >
+              <Text style={banner.button}>Dismiss</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </Fragment>
   );
 };
@@ -138,6 +168,49 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_500Medium",
     color: "#A2A3A2",
     lineHeight: 28,
+  },
+});
+
+const banner = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    justifyContent: "space-between",
+  },
+
+  image: {
+    height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 18,
+    fontFamily: "Rubik_500Medium",
+    color: "#2C2948",
+    lineHeight: 22,
+    textAlign: "center",
+  },
+
+  text: {
+    fontSize: 14,
+    fontFamily: "Rubik_400Regular",
+    color: "#1C1939CC",
+    lineHeight: 21,
+    textAlign: "center",
+  },
+
+  button: {
+    fontSize: 14,
+    fontFamily: "Rubik_700Bold",
+    color: "#4840BB",
+    lineHeight: 23,
+    textAlign: "center",
+    marginTop: 30,
+    alignSelf: "center",
+    alignItems: "center",
+    textAlignVertical: "center",
   },
 });
 

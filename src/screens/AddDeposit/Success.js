@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, Feather } from "@expo/vector-icons";
 
+import Modal from "../../components/Banner";
+
 const Success = ({ navigation }) => {
+  const modalRef = React.useRef();
+
   return (
     <Fragment>
       <SafeAreaView
