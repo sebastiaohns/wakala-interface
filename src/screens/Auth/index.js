@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   SafeAreaView,
@@ -12,42 +12,40 @@ import { LinearGradient } from "expo-linear-gradient";
 import CountryFlag from "react-native-country-flag";
 import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { Feather } from "@expo/vector-icons";
-import { Magic } from '@magic-sdk/react-native';
-
+import { Magic } from "@magic-sdk/react-native";
 
 export default function SignUpScreen({ navigation }) {
   const [countryCode, setCountryCode] = React.useState("+254");
   const [number, setNumber] = React.useState("");
-  const [user, setUser] = React.useState('');
+  const [user, setUser] = React.useState("");
 
-  const magic = new Magic('pk_live_5B2A9951805695BB', {
+  const magic = new Magic("pk_live_5B2A9951805695BB", {
     network: {
-      rpcUrl: 'https://alfajores-forno.celo-testnet.org'
-    }
+      rpcUrl: "https://alfajores-forno.celo-testnet.org",
+    },
   });
 
+  // Trigger magic link for user to login / generate wallet
+  const login = async () => {
+    try {
+      await magic.auth.loginWithSMS({
+        phoneNumber: countryCode + number, //pass the phone input value to get otp sms
+      });
+      // Consume decentralized identity (DID)
+      magic.user.getMetadata().then(setUser);
+      //TODO Navigate to Terms and Conditions Page
+    } catch (err) {
+      alert(err);
+    }
+  };
 
-    // Trigger magic link for user to login / generate wallet
-    const login = async () => {
-      try {
-        await magic.auth.loginWithSMS({
-          phoneNumber: countryCode+number//pass the phone input value to get otp sms
-        });
-        // Consume decentralized identity (DID)
-        magic.user.getMetadata().then(setUser);
-        //TODO Navigate to Terms and Conditions Page
-
-      } catch(err) {
-        alert(err);
-      }
-    };
-  
-    // Logout of Magic session
-    const logout = async () => {
-      await magic.user.logout();
-      setUser('');
-      console.log('logged out')
-    };
+  // Logout of Magic session
+  const logout = async () => {
+    await magic.user.logout();
+    setUser("");
+    console.log("logged out");
+    navigation.navigate("Home");
+  };
 
   // If user is logged in, fetch user wallet balance and the `message` variable value from the smart contract
   /*useEffect(() => {
@@ -60,7 +58,6 @@ export default function SignUpScreen({ navigation }) {
       });
     })
   }, [])*/
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -153,7 +150,7 @@ export default function SignUpScreen({ navigation }) {
                 style={styles.numberInput}
                 placeholder="Type here your phone number!"
                 value={number}
-                onChangeText={text => setNumber(text)}
+                onChangeText={(text) => setNumber(text)}
                 // defaultValue={number}
               />
             </View>
@@ -183,7 +180,7 @@ export default function SignUpScreen({ navigation }) {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-      <magic.Relayer />
+        <magic.Relayer />
       </View>
     </SafeAreaView>
   );
