@@ -169,7 +169,8 @@ export default function SignUpScreen({ navigation }) {
             </LinearGradient>
           </TouchableOpacity>
           <Text style={[FONTS.body3, styles.orText]}>or</Text>
-          <TouchableOpacity onPress={() => logout()}>
+
+          <TouchableOpacity onPress={() => navigation.navigate("RestoreWallet")}>
             <LinearGradient
               colors={["rgba(232, 200, 223, 1)", "rgba(204, 198, 210, 1)"]}
               start={[1, 0]}

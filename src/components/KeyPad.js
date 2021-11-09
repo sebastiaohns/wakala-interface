@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "auto",
     flexDirection: "row",
-    justifyContent: "center",
     justifyContent: "space-around",
   },
 
