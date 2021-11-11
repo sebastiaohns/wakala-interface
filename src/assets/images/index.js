@@ -7,6 +7,7 @@ export const HOME_EMPTY = require("./home_empty.png");
 export const CASH = require("./cash.png");
 export const MPESA = require("./mpesa.png");
 export const CROSS = require("./cross.png")
+export const WAKALA_LOGO = require("./wakala-logo.png")
 
 export const MODEL = require("./model.png");
 export const SHARED = require("./shared.png");

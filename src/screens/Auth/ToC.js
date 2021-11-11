@@ -9,6 +9,7 @@ import {
 import {LinearGradient} from "expo-linear-gradient";
 import {COLORS, FONTS, SIZES} from "../../consts/theme";
 import HeaderTitle from "../../components/HeaderTitle";
+import {RFPercentage} from "react-native-responsive-fontsize";
 
 export default function ToC({navigation}) {
     return (
@@ -44,7 +45,7 @@ export default function ToC({navigation}) {
                     </View>
 
                     <View style={styles.buttonWrapper}>
-                        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                        <TouchableOpacity onPress={() => navigation.navigate("SetPIN")}>
                             <LinearGradient
                                 colors={COLORS.buttonGradient}
                                 start={[1, 0]}
@@ -63,18 +64,19 @@ export default function ToC({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#E5E5E5",
+        justifyContent: "center",
     },
+
     wrapper: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 20,
+        justifyContent: "space-around",
+        paddingHorizontal: 40,
     },
 
     titleWrapper: {
         width: "100%",
-        marginTop: 80,
+        marginTop: RFPercentage(8),
         marginBottom: 0,
         alignItems: "flex-start",
     },
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     contentWrapper: {
-        marginBottom: 150,
+        marginBottom: RFPercentage(18),
         marginTop: 10,
         padding: 0,
         alignItems: "flex-start",
