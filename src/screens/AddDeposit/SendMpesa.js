@@ -1,21 +1,31 @@
 import React, { Fragment } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-
-import { LinearGradient } from "expo-linear-gradient";
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import SwipeButton from "../../components/SwipeButton";
-import Modal from "../../components/Modal";
-import { SIZES } from "../../consts/theme";
+import { Ionicons } from "@expo/vector-icons";
 
+import { SIZES } from "../../consts/theme";
 import { BORED } from "../../assets/images";
+
+import Modal from "../../components/Modal";
+import NavHeader from "../../components/NavHeader";
+import ScreenCmpt from "../../components/ScreenCmpt";
+
+const ModalContent = (props) => {
+  return (
+    <View style={modal.container}>
+      <Image source={BORED} style={modal.image} />
+      <Text style={modal.title}>Thank you!</Text>
+      <Text style={modal.text}>
+        After your agents confirms of M-PESA payment receipt. Your cUSD will be
+        deposited to your wallet.
+      </Text>
+
+      <TouchableOpacity onPress={() => props.handleAction()}>
+        <Text style={modal.button}>Got it!</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const SendMpesa = ({ navigation }) => {
   const modalRef = React.useRef();
@@ -31,97 +41,65 @@ const SendMpesa = ({ navigation }) => {
 
   return (
     <Fragment>
-      <SafeAreaView
-        style={{ flex: 0, backgroundColor: "rgba(247, 239, 250, 1.0)" }}
-      />
-
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FCF8ED" }}>
-        <LinearGradient
-          colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
-          start={[1, 0]}
-          end={[1, 1]}
-          style={styles.container}
+      <ScreenCmpt>
+        <View
+          style={{
+            marginHorizontal: 30,
+            flex: 1,
+          }}
         >
-          <View
-            style={{
-              marginHorizontal: 30,
-              flex: 1,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.nav}
-            >
-              <Feather name="chevron-left" size={32} color="#4840BB" />
-            </TouchableOpacity>
+          <NavHeader />
 
+          <View>
+            <View style={styles.titleContainer}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="md-paper-plane-sharp" size={20} color="white" />
+              </View>
+              <Text style={styles.title}>Send M-PESA now </Text>
+            </View>
             <View>
-              <View style={styles.titleContainer}>
-                <View style={styles.iconContainer}>
-                  <Ionicons
-                    name="md-paper-plane-sharp"
-                    size={20}
-                    color="white"
-                  />
-                </View>
-                <Text style={styles.title}>Send M-PESA now </Text>
-              </View>
-              <View>
-                <Text style={styles.text}>
-                  Your cUSD is ready and has been deposited to the Wakala escrow
-                  account!
-                </Text>
-                <Text style={styles.text}>
-                  To receive your cUSD, send M-PESA to details below.
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.card}>
-              <View>
-                <Text style={styles.cardSubTitle}>Send</Text>
-                <Text style={[styles.cardTitle, { marginBottom: 18 }]}>
-                  Ksh 1,000
-                </Text>
-              </View>
-              <View>
-                <Text style={styles.cardSubTitle}>To</Text>
-                <Text style={styles.cardTitle}>+254 705 124 767</Text>
-                <View style={styles.copyContainer}>
-                  <Text style={styles.copyText}>Copy</Text>
-                </View>
-              </View>
-            </View>
-
-            <SwipeButton handleAction={openModal} />
-            <TouchableOpacity
-              style={{ marginTop: 30 }}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={[navStyles.buttonText, { color: "#133FDB" }]}>
-                Cancel
+              <Text style={styles.text}>
+                Your cUSD is ready and has been deposited to the Wakala escrow
+                account!
               </Text>
-            </TouchableOpacity>
+              <Text style={styles.text}>
+                To receive your cUSD, send M-PESA to details below.
+              </Text>
+            </View>
           </View>
-        </LinearGradient>
-      </SafeAreaView>
+
+          <View style={styles.card}>
+            <View>
+              <Text style={styles.cardSubTitle}>Send</Text>
+              <Text style={[styles.cardTitle, { marginBottom: 18 }]}>
+                Ksh 1,000
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.cardSubTitle}>To</Text>
+              <Text style={styles.cardTitle}>+254 705 124 767</Text>
+              <View style={styles.copyContainer}>
+                <Text style={styles.copyText}>Copy</Text>
+              </View>
+            </View>
+          </View>
+
+          <SwipeButton handleAction={openModal} />
+          <TouchableOpacity
+            style={{ marginTop: 30 }}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={[navStyles.buttonText, { color: "#133FDB" }]}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenCmpt>
+
       <Modal
         ref={modalRef}
         style={{ height: 500 }}
-        content={
-          <View style={modal.container}>
-            <Image source={BORED} style={modal.image} />
-            <Text style={modal.title}>Thank you!</Text>
-            <Text style={modal.text}>
-              After your agents confirms of M-PESA payment receipt. Your cUSD
-              will be deposited to your wallet.
-            </Text>
-
-            <TouchableOpacity onPress={closeModal}>
-              <Text style={modal.button}>Got it!</Text>
-            </TouchableOpacity>
-          </View>
-        }
+        content={<ModalContent handleAction={closeModal} />}
       />
     </Fragment>
   );
@@ -212,20 +190,6 @@ const styles = StyleSheet.create({
 });
 
 const navStyles = StyleSheet.create({
-  button: {
-    justifyContent: "center",
-    borderRadius: 28,
-    height: 56,
-    width: "100%",
-  },
-
-  buttonShadow: {
-    shadowColor: "#133FDB",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 22,
-  },
-
   buttonText: {
     fontSize: 20,
     lineHeight: 24,

@@ -1,110 +1,77 @@
-import React, { Fragment } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
-
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
-const SelectTopUpWithdraw = ({ navigation }) => {
-  return (
-    <Fragment>
-      <SafeAreaView
-        style={{ flex: 0, backgroundColor: "rgba(247, 239, 250, 1.0)" }}
-      />
+import ScreenCmpt from "../../components/ScreenCmpt";
+import NavHeader from "../../components/NavHeader";
 
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FCF8ED" }}>
+const ButtonsOptions = (props) => {
+  const navigation = useNavigation();
+
+  return (
+    <View>
+      <TouchableOpacity onPress={() => navigation.navigate(props.navigateTo)}>
         <LinearGradient
-          colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
+          colors={["#F7EFFA", "#FCF8ED"]}
           start={[1, 0]}
           end={[1, 1]}
-          style={styles.container}
+          style={buttonStyles.button}
         >
-          <View style={{ marginHorizontal: 30 }}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.nav}
-            >
-              <Feather name="chevron-left" size={32} color="#4840BB" />
-            </TouchableOpacity>
-
-            <View>
-              <Text style={styles.subtitle}>Current balance</Text>
-              <Text style={styles.title}>Ksh 10,000</Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Cash Mpesa")}
-              >
-                <LinearGradient
-                  colors={[
-                    "rgba(247, 239, 250, 1.0)",
-                    "rgba(252, 248, 237, 1.0)",
-                  ]}
-                  start={[1, 0]}
-                  end={[1, 1]}
-                  style={styles.button}
-                >
-                  <View style={styles.icon}>
-                    <Feather
-                      name="arrow-up-circle"
-                      size={26}
-                      color="#4840BB"
-                      style={{
-                        transform: [{ rotate: "135deg" }],
-                      }}
-                    />
-                  </View>
-                  <Text style={styles.buttonTitle}>Top Up</Text>
-                  <Text style={styles.subtitle}>Buy cUSD</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <LinearGradient
-                  colors={[
-                    "rgba(247, 239, 250, 1.0)",
-                    "rgba(252, 248, 237, 1.0)",
-                  ]}
-                  start={[1, 0]}
-                  end={[1, 1]}
-                  style={styles.button}
-                >
-                  <View style={styles.icon}>
-                    <Feather
-                      name="arrow-up-circle"
-                      size={26}
-                      color="#4840BB"
-                      style={{
-                        transform: [{ rotate: "45deg" }],
-                      }}
-                    />
-                  </View>
-                  <Text style={styles.buttonTitle}>Withdraw</Text>
-                  <Text style={styles.subtitle}>Sell cUSD</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+          <View style={buttonStyles.icon}>
+            <Feather
+              name={props.icon}
+              size={26}
+              color="#4840BB"
+              style={props.styleIcon}
+            />
           </View>
+          <Text style={buttonStyles.buttonTitle}>{props.title}</Text>
+          <Text style={buttonStyles.buttonSubTitle}>{props.subTitle}</Text>
         </LinearGradient>
-      </SafeAreaView>
-    </Fragment>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const SelectTopUpWithdraw = () => {
+  return (
+    <ScreenCmpt>
+      <View style={styles.container}>
+        <NavHeader />
+        <View>
+          <Text style={styles.subTitle}>Current balance</Text>
+          <Text style={styles.title}>Ksh 10,000</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <ButtonsOptions
+            title="Top Up"
+            subTitle="Buy cUSD"
+            icon="arrow-up-circle"
+            navigateTo="Cash Mpesa"
+            styleIcon={{
+              transform: [{ rotate: "45deg" }],
+            }}
+          />
+          <ButtonsOptions
+            title="Withdraw"
+            subTitle="Sell cUSD"
+            icon="arrow-up-circle"
+            navigateTo=""
+            styleIcon={{
+              transform: [{ rotate: "135deg" }],
+            }}
+          />
+        </View>
+      </View>
+    </ScreenCmpt>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-
-  nav: {
-    width: "100%",
-    height: 80,
-    marginLeft: 5,
+    marginHorizontal: 30,
   },
 
   title: {
@@ -114,7 +81,7 @@ const styles = StyleSheet.create({
     lineHeight: 34,
   },
 
-  subtitle: {
+  subTitle: {
     fontSize: 12,
     fontFamily: "Rubik_400Regular",
     color: "#333333",
@@ -126,7 +93,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 50,
   },
+});
 
+const buttonStyles = StyleSheet.create({
   button: {
     width: 136,
     height: 200,
@@ -152,6 +121,13 @@ const styles = StyleSheet.create({
     color: "#4840BB",
     lineHeight: 22,
     marginBottom: 12,
+  },
+
+  buttonSubTitle: {
+    fontSize: 12,
+    fontFamily: "Rubik_400Regular",
+    color: "#333333",
+    lineHeight: 14,
   },
 });
 

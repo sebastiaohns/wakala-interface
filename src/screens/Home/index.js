@@ -1,11 +1,10 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image,
   View,
   Text,
   Platform,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   LayoutAnimation,
   FlatList,
@@ -18,6 +17,8 @@ import RequestCard from "../../components/RequestCard";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import { HOME_EMPTY } from "../../assets/images";
 import rawData from "../../utils/DepositRequestData";
+
+import ScreenCmpt from "../../components/ScreenCmpt";
 
 const HomeScreen = ({ navigation }) => {
   const [isEmpty, setIsEmpty] = useState(true);
@@ -46,85 +47,81 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <Fragment>
-      <SafeAreaView style={{ flex: 0, backgroundColor: "#E5E5E5" }} />
+    <ScreenCmpt>
+      <View style={styles.menu}>
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <Ionicons name="list-outline" size={38} color={COLORS.primary} />
+        </TouchableOpacity>
+      </View>
 
-      <SafeAreaView style={styles.container}>
-        <View style={styles.menu}>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <Ionicons name="list-outline" size={38} color={COLORS.primary} />
-          </TouchableOpacity>
+      {isEmpty ? (
+        <View style={styles.wrapper}>
+          <Image source={HOME_EMPTY} style={styles.image} />
+          <Text style={styles.text}>
+            All requests have been fullfilled. Take a break, get some air, check
+            back in later
+          </Text>
         </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#E5E5E5",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FlatList
+            data={depositRequestData}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <RequestCard
+                _id={item._id}
+                amount={item.amount}
+                stars={item.stars}
+                rating={item.rating}
+                deleteItem={removeDepositRequestItem}
+              />
+            )}
+          />
+        </View>
+      )}
 
-        {isEmpty ? (
-          <View style={styles.wrapper}>
-            <Image source={HOME_EMPTY} style={styles.image} />
-            <Text style={styles.text}>
-              All requests have been fullfilled. Take a break, get some air,
-              check back in later
-            </Text>
-          </View>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "#E5E5E5",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+      <View style={navStyles.nav}>
+        <TouchableOpacity style={navStyles.buttonShadow}>
+          <LinearGradient
+            colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
+            start={[1, 0]}
+            end={[0, 1]}
+            style={navStyles.button}
           >
-            <FlatList
-              data={depositRequestData}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => (
-                <RequestCard
-                  _id={item._id}
-                  amount={item.amount}
-                  stars={item.stars}
-                  rating={item.rating}
-                  deleteItem={removeDepositRequestItem}
-                />
-              )}
+            <Text style={navStyles.buttonText}>Send</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={navStyles.buttonShadow}
+          onPress={() => navigation.navigate("Select Top up Withdraw")}
+        >
+          <LinearGradient
+            colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
+            start={[1, 0]}
+            end={[0, 1]}
+            style={navStyles.button}
+          >
+            <Text style={navStyles.buttonText}>Add/Withdraw</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={navStyles.qrButton}>
+            <MaterialCommunityIcons
+              name="qrcode-scan"
+              size={SIZES.width * 0.07}
+              color={COLORS.primary}
             />
           </View>
-        )}
-
-        <View style={navStyles.nav}>
-          <TouchableOpacity style={navStyles.buttonShadow}>
-            <LinearGradient
-              colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-              start={[1, 0]}
-              end={[0, 1]}
-              style={navStyles.button}
-            >
-              <Text style={navStyles.buttonText}>Send</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={navStyles.buttonShadow}
-            onPress={() => navigation.navigate("Select Top up Withdraw")}
-          >
-            <LinearGradient
-              colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-              start={[1, 0]}
-              end={[0, 1]}
-              style={navStyles.button}
-            >
-              <Text style={navStyles.buttonText}>Add/Withdraw</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={navStyles.qrButton}>
-              <MaterialCommunityIcons
-                name="qrcode-scan"
-                size={SIZES.width * 0.07}
-                color={COLORS.primary}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </Fragment>
+        </TouchableOpacity>
+      </View>
+    </ScreenCmpt>
   );
 };
 

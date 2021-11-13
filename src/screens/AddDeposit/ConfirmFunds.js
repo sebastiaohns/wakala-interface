@@ -16,6 +16,27 @@ import { SIZES } from "../../consts/theme";
 
 import { SHARED } from "../../assets/images";
 
+import NavHeader from "../../components/NavHeader";
+import ScreenCmpt from "../../components/ScreenCmpt";
+
+const ModalContent = (props) => {
+  return (
+    <View style={modalStyles.container}>
+      <Image source={SHARED} style={modalStyles.image} />
+      <Text style={modalStyles.title}>Request Shared</Text>
+      <Text style={modalStyles.text}>
+        We shared your deposit request with the agent community. We will notify
+        you once an agent has answered your request. It can take up to 4
+        minutes. Click OK to exit this page.
+      </Text>
+
+      <TouchableOpacity onPress={() => props.handleAction()}>
+        <Text style={modalStyles.button}>Okay</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const ConfirmFunds = ({ navigation }) => {
   const modalRef = React.useRef();
 
@@ -30,88 +51,48 @@ const ConfirmFunds = ({ navigation }) => {
 
   return (
     <Fragment>
-      <SafeAreaView
-        style={{ flex: 0, backgroundColor: "rgba(247, 239, 250, 1.0)" }}
-      />
+      <ScreenCmpt>
+        <View style={styles.container}>
+          <NavHeader />
 
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FCF8ED" }}>
-        <LinearGradient
-          colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
-          start={[1, 0]}
-          end={[1, 1]}
-          style={styles.container}
-        >
-          <View
-            style={{
-              flex: 1,
-              marginBottom: 50,
-              marginHorizontal: 30,
-              justifyContent: "space-between",
-            }}
+          <LinearGradient
+            colors={[
+              "rgba(255, 140, 161, 0.08)",
+              "rgba(252, 207, 47, 0.08)",
+              "rgba(255, 255, 255, 0.08)",
+              "rgba(248, 48, 180, 0.08)",
+              "rgba(47, 68, 252, 0.08)",
+            ]}
+            start={[0, 1]}
+            end={[1, 0]}
+            style={styles.cardContainer}
           >
-            <View>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={styles.nav}
-              >
-                <Feather name="chevron-left" size={32} color="#4840BB" />
-              </TouchableOpacity>
-
-              <LinearGradient
-                colors={[
-                  "rgba(255, 140, 161, 0.08)",
-                  "rgba(252, 207, 47, 0.08)",
-                  "rgba(255, 255, 255, 0.08)",
-                  "rgba(248, 48, 180, 0.08)",
-                  "rgba(47, 68, 252, 0.08)",
-                ]}
-                start={[0, 1]}
-                end={[1, 0]}
-                style={styles.cardContainer}
-              >
-                <View style={styles.requestInfoContainer}>
-                  <Text style={styles.requestTitle}>Request to deposit</Text>
-                  <Text style={styles.requestAmount}>Ksh 1,000</Text>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row" }}>
-                  <View style={styles.descriptionContainer}>
-                    <View
-                      style={{ flexDirection: "row", alignItems: "baseline" }}
-                    >
-                      <Text style={styles.feesText}>Estimated Fees </Text>
-                      <Feather name="info" size={11} color="#222222" />
-                    </View>
-                    <Text style={styles.receivesText}>Total you receive</Text>
-                  </View>
-                  <View style={styles.AmountContainer}>
-                    <Text style={styles.feesText}>Ksh 10</Text>
-                    <Text style={styles.receivesText}>Ksh 990</Text>
-                  </View>
-                </View>
-              </LinearGradient>
+            <View style={styles.requestInfoContainer}>
+              <Text style={styles.requestTitle}>Request to deposit</Text>
+              <Text style={styles.requestAmount}>Ksh 1,000</Text>
             </View>
-            <SwipeButton handleAction={openModal} />
-          </View>
-        </LinearGradient>
-      </SafeAreaView>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={styles.descriptionContainer}>
+                <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+                  <Text style={styles.feesText}>Estimated Fees </Text>
+                  <Feather name="info" size={11} color="#222222" />
+                </View>
+                <Text style={styles.receivesText}>Total you receive</Text>
+              </View>
+              <View style={styles.AmountContainer}>
+                <Text style={styles.feesText}>Ksh 10</Text>
+                <Text style={styles.receivesText}>Ksh 990</Text>
+              </View>
+            </View>
+          </LinearGradient>
+
+          <SwipeButton handleAction={openModal} />
+        </View>
+      </ScreenCmpt>
       <Modal
         ref={modalRef}
         style={{ height: 550 }}
-        content={
-          <View style={modal.container}>
-            <Image source={SHARED} style={modal.image} />
-            <Text style={modal.title}>Request Shared</Text>
-            <Text style={modal.text}>
-              We shared your deposit request with the agent community. We will
-              notify you once an agent has answered your request. It can take up
-              to 4 minutes. Click OK to exit this page.
-            </Text>
-
-            <TouchableOpacity onPress={closeModal}>
-              <Text style={modal.button}>Okay</Text>
-            </TouchableOpacity>
-          </View>
-        }
+        content={<ModalContent handleAction={closeModal} />}
       />
     </Fragment>
   );
@@ -120,6 +101,9 @@ const ConfirmFunds = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 50,
+    marginHorizontal: 30,
+    justifyContent: "space-between",
   },
 
   nav: {
@@ -179,31 +163,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const navStyles = StyleSheet.create({
-  button: {
-    justifyContent: "center",
-    borderRadius: 28,
-    height: 56,
-    width: "100%",
-  },
-
-  buttonShadow: {
-    shadowColor: "#133FDB",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 22,
-  },
-
-  buttonText: {
-    fontSize: 20,
-    lineHeight: 24,
-    fontFamily: "Rubik_500Medium",
-    textAlign: "center",
-    color: "#FFF",
-  },
-});
-
-const modal = StyleSheet.create({
+const modalStyles = StyleSheet.create({
   container: {
     height: "100%",
     paddingVertical: 20,
