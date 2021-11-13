@@ -83,11 +83,6 @@ const Home = () => {
         options={{ headerShown: false }}
       />
       <Drawer.Screen
-        name="Support"
-        component={ContactSupportScreen}
-        // options={{ headerShown: false }}
-      />
-      <Drawer.Screen
       name="PinSuccess"
       component={PinSuccessScreen}
       options={{ headerShown: false }}

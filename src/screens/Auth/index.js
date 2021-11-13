@@ -167,6 +167,7 @@ export default function SignUpScreen({ navigation }) {
                         onChangeText={(formatted, extracted) => {
                           setNumber(formatted)
                         }}
+                        keyboardType={"phone-pad"}
                         ref={inputRef}
                         style={styles.numberInput}
                         placeholder="Type here your phone number!"
