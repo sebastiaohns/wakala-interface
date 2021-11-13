@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, Switch, StyleSheet } from 'react-native'
+import { View, Text, Image, ScrollView, Switch, StyleSheet, TouchableOpacity } from 'react-native'
 import { RFPercentage } from 'react-native-responsive-fontsize';
 
 //components
-import Screen from '/src/components/Screen';
+import Screen from '../../components/Screen';
 //config
 import { COLORS } from '../../consts/theme';
+
 
 function SettingsScreen(props) {
 
@@ -34,31 +35,36 @@ function SettingsScreen(props) {
                 <View style={{ justifyContent: 'center', alignItems: 'flex-start', width: '100%', marginTop: RFPercentage(1) }}>
 
                     <View style={{ width: '100%', height: RFPercentage(0.1), backgroundColor: COLORS.line, marginTop: RFPercentage(8) }} />
+                    <TouchableOpacity activeOpacity={0.6} onPress={() => props.navigation.navigate("SelectCurrency")} >
                     <Text style={styles.button}>
                         Currency(Kash)
                     </Text>
+                    </TouchableOpacity>
                     <View style={styles.text1} />
-
                     <Text style={{ marginTop: RFPercentage(5), marginLeft: RFPercentage(6), color: COLORS.darkBlue, fontSize: RFPercentage(2.6), fontFamily: 'Rubik_700Bold' }}>
                         Wallet
                     </Text>
                     <View style={{ width: '100%', height: RFPercentage(0.1), backgroundColor: COLORS.line, marginTop: RFPercentage(2) }} />
+                    <TouchableOpacity activeOpacity={0.6} onPress={() => props.navigation.navigate("Account Address")} >
                     <Text style={styles.button}>
                         Account Address
                     </Text>
-                    <View style={styles.text1} />
-                    <Text style={styles.button}>
-                        Recovery Phrase
-                    </Text>
+                    </TouchableOpacity>
+                    <View style={styles.text1} />    
+                    <TouchableOpacity activeOpacity={0.6} onPress={() => props.navigation.navigate("RecoveryPhrase")} >
+                       <Text style={styles.button}> Recovery Phrase </Text>
+                    </TouchableOpacity>
                     <View style={styles.text1} />
 
                     <Text style={{ marginTop: RFPercentage(10), marginLeft: RFPercentage(6), color: COLORS.darkBlue, fontSize: RFPercentage(2.6), fontFamily: 'Rubik_700Bold' }}>
                         Security and Data
                     </Text>
                     <View style={{ width: '100%', height: RFPercentage(0.1), backgroundColor: COLORS.line, marginTop: RFPercentage(2.4) }} />
+                    <TouchableOpacity activeOpacity={0.6} onPress={() => props.navigation.navigate("PinDoNotMatch")} >
                     <Text style={styles.button}>
                         Change Pin
                     </Text>
+                    </TouchableOpacity>
                     <View style={styles.text1} />
                     <View style={styles.settings1}>
                         <Text style={styles.button}>
@@ -106,10 +112,11 @@ function SettingsScreen(props) {
                         Privacy Policy
                     </Text>
                     <View style={styles.text1} />
-
+                    <TouchableOpacity activeOpacity={0.6} onPress={() => props.navigation.navigate("ResetAccount")} >
                     <Text style={{ marginTop: RFPercentage(6), marginLeft: RFPercentage(6), color: COLORS.darkBlue, fontSize: RFPercentage(2.6), fontFamily: 'Rubik_400Regular' }}>
                         Reset Wakala
                     </Text>
+                    </TouchableOpacity>
 
                     <View style={{ marginBottom: RFPercentage(15), marginTop: RFPercentage(3), alignSelf: 'center', width: '80%', justifyContent: 'center', alignItems: 'flex-start' }}>
                         <Text style={{ color: '#333333', fontFamily: 'Rubik_400Regular' }}>

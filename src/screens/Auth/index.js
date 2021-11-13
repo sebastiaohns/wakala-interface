@@ -13,11 +13,15 @@ import CountryFlag from "react-native-country-flag";
 import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { Feather } from "@expo/vector-icons";
 import { Magic } from "@magic-sdk/react-native";
+import { TextInputMask } from "react-native-masked-text";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import HeaderTitle from "../../components/HeaderTitle";
 
 export default function SignUpScreen({ navigation }) {
   const [countryCode, setCountryCode] = React.useState("+254");
   const [number, setNumber] = React.useState("");
   const [user, setUser] = React.useState("");
+  const inputRef = React.createRef();
 
   const magic = new Magic("pk_live_5B2A9951805695BB", {
     network: {
@@ -27,6 +31,13 @@ export default function SignUpScreen({ navigation }) {
 
   // Trigger magic link for user to login / generate wallet
   const login = async () => {
+    if (number === "") {
+      /**
+       * For test purposes, leave the field blank to move to the next screen
+       */
+      navigation.navigate("VerifyNumber");
+      return;
+    }
     try {
       await magic.auth.loginWithSMS({
         phoneNumber: countryCode + number, //pass the phone input value to get otp sms
@@ -58,141 +69,145 @@ export default function SignUpScreen({ navigation }) {
       });
     })
   }, [])*/
+  const title = "A \ncommunity \nthat you \nwill love.";
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.title}>A community that you will love.</Text>
-        </View>
-        <View>
-          <Text style={{ ...FONTS.body3, fontSize: 14, alignSelf: "center" }}>
-            Enter Phone number to Login or sign up
-          </Text>
-          <View
-            style={{
-              marginTop: 20,
-              backgroundColor: COLORS.white,
-              borderRadius: 10,
-            }}
-          >
-            <View
-              style={[
-                styles.numberInputBlock,
-                {
-                  borderRadius: 10,
-                  borderBottomRightRadius: 0,
-                  borderBottomLeftRadius: 0,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.countryInput,
-                  {
-                    borderTopLeftRadius: 10,
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                <CountryFlag isoCode="ke" size={21} />
-              </View>
-              <View style={styles.border} />
-              <View
-                style={[
-                  styles.numberInput,
-                  {
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 10,
-                  },
-                ]}
-                placeholder="Type your phone number here!"
-              >
-                <Text style={FONTS.body3}>Kenya</Text>
-                <TouchableOpacity>
-                  <LinearGradient
-                    colors={COLORS.buttonGradient}
-                    style={styles.countrySelectorButton}
-                  >
-                    <Feather name="chevron-right" size={20} color="white" />
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.border,
-                {
-                  width: SIZES.width * 0.75,
-                  height: 1,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.numberInputBlock,
-                {
-                  borderBottomRightRadius: 10,
-                  borderBottomLeftRadius: 10,
-                },
-              ]}
-            >
-              <TextInput
-                style={styles.countryInput}
-                placeholder="+254"
-                onChangeText={(text) => setCountryCode(text)}
-                defaultValue={countryCode}
-              />
-              <View style={styles.border} />
-              <TextInput
-                style={styles.numberInput}
-                placeholder="Type here your phone number!"
-                value={number}
-                onChangeText={(text) => setNumber(text)}
-                // defaultValue={number}
-              />
-            </View>
-          </View>
-        </View>
+    <KeyboardAwareScrollView style={{ flex: 1 }}>
+      <LinearGradient
+        style={styles.container}
+        colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
+        start={[1, 0]}
+        end={[1, 1]}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.wrapper}>
+            <HeaderTitle navigation={navigation} title={title} />
 
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity onPress={() => login()}>
-            <LinearGradient
-              colors={COLORS.buttonGradient}
-              start={[1, 0]}
-              end={[0, 1]}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Create account</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <Text style={[FONTS.body3, styles.orText]}>or</Text>
-          <TouchableOpacity onPress={() => logout()}>
-            <LinearGradient
-              colors={["rgba(232, 200, 223, 1)", "rgba(204, 198, 210, 1)"]}
-              start={[1, 0]}
-              end={[0, 1]}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Restore account</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-        <magic.Relayer />
-      </View>
-    </SafeAreaView>
+            <View>
+              <Text
+                style={{ ...FONTS.body3, fontSize: 14, alignSelf: "center" }}
+              >
+                Enter Phone number to Login or sign up
+              </Text>
+              <View
+                style={{
+                  marginTop: 20,
+                  backgroundColor: COLORS.white,
+                  borderRadius: 10,
+                }}
+              >
+                <View
+                  style={[
+                    styles.numberInputBlock,
+                    {
+                      borderRadius: 10,
+                      borderBottomRightRadius: 0,
+                      borderBottomLeftRadius: 0,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.countryInput,
+                      {
+                        borderTopLeftRadius: 10,
+                        justifyContent: "center",
+                      },
+                    ]}
+                  >
+                    <CountryFlag isoCode="ke" size={21} />
+                  </View>
+                  <View style={styles.border} />
+                  <View
+                    style={[
+                      styles.numberInput,
+                      {
+                        justifyContent: "space-between",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        borderRadius: 10,
+                      },
+                    ]}
+                    placeholder="Type your phone number here!"
+                  >
+                    <Text style={FONTS.body3}>Kenya</Text>
+                    <TouchableOpacity>
+                      <View
+                        colors={COLORS.buttonGradient}
+                        style={styles.countrySelectorButton}
+                      >
+                        <Feather name="chevron-right" size={20} color="white" />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View
+                  style={[
+                    styles.border,
+                    {
+                      width: SIZES.width * 0.75,
+                      height: 1,
+                    },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.numberInputBlock,
+                    { borderBottomRightRadius: 10, borderBottomLeftRadius: 10 },
+                  ]}
+                >
+                  <TextInput
+                    style={styles.countryInput}
+                    placeholder="+254"
+                    onChangeText={(text) => setCountryCode(text)}
+                    defaultValue={countryCode}
+                  />
+                  <View style={styles.border} />
+                  <TextInputMask
+                    type={"custom"}
+                    value={number}
+                    options={{
+                      maskType: "BRL",
+                      withDDD: true,
+                      mask: "(999) 999 999",
+                    }}
+                    onChangeText={(formatted, extracted) => {
+                      setNumber(formatted);
+                    }}
+                    keyboardType={"phone-pad"}
+                    ref={inputRef}
+                    style={styles.numberInput}
+                    placeholder="Type here your phone number!"
+                    placeholderTextColor={COLORS.black}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity onPress={() => login()}>
+                <LinearGradient
+                  colors={COLORS.buttonGradient}
+                  start={[1, 0]}
+                  end={[0, 1]}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>Submit</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+            <magic.Relayer />
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    </KeyboardAwareScrollView>
   );
 }
-
-const { height } = Dimensions.get("window");
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E5E5E5",
     justifyContent: "center",
+    height: SIZES.height,
   },
 
   wrapper: {
@@ -200,21 +215,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     paddingHorizontal: 40,
-  },
-
-  titleWrapper: {
-    width: "100%",
-    justifyContent: "flex-start",
-  },
-
-  title: {
-    fontSize: 28,
-    textAlign: "left",
-    color: "#4840BB",
-    lineHeight: 28.44,
-    fontFamily: "Rubik_500Medium",
-    width: 240,
-    marginBottom: 50,
   },
 
   buttonWrapper: {
@@ -274,5 +274,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 20,
+    backgroundColor: "#4840BB",
   },
 });

@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import SwipeButton from "../../components/SwipeButton";
 import { Ionicons } from "@expo/vector-icons";
 
 import { SIZES } from "../../consts/theme";
@@ -9,19 +8,20 @@ import { BORED } from "../../assets/images";
 import Modal from "../../components/Modal";
 import NavHeader from "../../components/NavHeader";
 import ScreenCmpt from "../../components/ScreenCmpt";
+import SwipeButton from "../../components/SwipeButton";
 
 const ModalContent = (props) => {
   return (
-    <View style={modal.container}>
-      <Image source={BORED} style={modal.image} />
-      <Text style={modal.title}>Thank you!</Text>
-      <Text style={modal.text}>
+    <View style={modalStyles.container}>
+      <Image source={BORED} style={modalStyles.image} />
+      <Text style={modalStyles.title}>Thank you!</Text>
+      <Text style={modalStyles.text}>
         After your agents confirms of M-PESA payment receipt. Your cUSD will be
         deposited to your wallet.
       </Text>
 
       <TouchableOpacity onPress={() => props.handleAction()}>
-        <Text style={modal.button}>Got it!</Text>
+        <Text style={modalStyles.button}>Got it!</Text>
       </TouchableOpacity>
     </View>
   );
@@ -196,6 +196,48 @@ const navStyles = StyleSheet.create({
     fontFamily: "Rubik_500Medium",
     textAlign: "center",
     color: "#FFF",
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+
+  image: {
+    height: 70,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+    marginTop: 50,
+  },
+
+  title: {
+    fontSize: 16,
+    fontFamily: "Rubik_500Medium",
+    color: "#333333",
+    lineHeight: 24,
+    textAlign: "center",
+    marginBottom: 26,
+  },
+
+  text: {
+    fontSize: 14,
+    fontFamily: "Rubik_400Regular",
+    color: "#333333",
+    lineHeight: 21,
+    textAlign: "center",
+    marginBottom: 58,
+  },
+
+  button: {
+    fontSize: 20,
+    fontFamily: "Rubik_500Medium",
+    color: "#133FDB",
+    lineHeight: 24,
+    textAlign: "center",
   },
 });
 

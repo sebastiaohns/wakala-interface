@@ -14,8 +14,8 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import Screen from "../../components/Screen";
 
 //config
-import theme from "../../consts/theme";
-import { COLORS } from "";
+import theme from '../../consts/theme';
+import { COLORS } from "../../consts/theme";
 
 function PinDoNotMatch(props) {
   const refInput2 = useRef();
@@ -54,6 +54,7 @@ function PinDoNotMatch(props) {
 
   const handleLastValue = (text) => {
     setValue6(text);
+  
 
     if (value1 && value2 && value3 && value4 && value5 && text) {
       showWarn(true);
@@ -61,7 +62,7 @@ function PinDoNotMatch(props) {
     } else {
       showWarn(false);
     }
-  };
+}
 
   return (
     <Screen
@@ -247,7 +248,8 @@ function PinDoNotMatch(props) {
         </View>
       </View>
     </Screen>
-  );
+  );  
+    
 }
 
 const styles = StyleSheet.create({
@@ -260,28 +262,38 @@ const styles = StyleSheet.create({
     width: RFPercentage(6),
     height: RFPercentage(6.9),
     marginVertical: RFPercentage(0.7),
-    borderRadius: RFPercentage(1),
-  },
+    borderRadius: RFPercentage(1)
+},
 
-  textinp: {
-    color: warn ? "red" : COLORS.black,
-    fontSize: RFPercentage(5),
-  },
+textinp: {
+    color: COLORS.warn ? 'red' : COLORS.black, 
+    fontSize: RFPercentage(5)
 
-  keypad: {
-    fontFamily: "DMSans_700Bold",
-    color: COLORS.keypad,
-    fontSize: RFPercentage(3.4),
-  },
+},
 
-  rowst: {
-    marginTop: RFPercentage(6),
-    width: "80%",
-    flexDirection: "row",
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+keypad: {
+    fontFamily: 'DMSans_700Bold',
+    color: COLORS.keypad, 
+    fontSize: RFPercentage(3.4)
+},
+
+rowst: {
+    marginTop: RFPercentage(6), 
+    width: '80%', 
+    flexDirection: 'row', 
+    alignSelf: 'center', 
+    justifyContent: 'center', 
+    alignItems: 'center'
+
+}
+
+
+
+
+
+
+
+
 });
 
 export default PinDoNotMatch;

@@ -244,7 +244,7 @@ export default class Swiper extends Component {
                         size={58}
                         thickness={3}
                         color={COLORS.primary}
-                        unfilledColor={COLORS.backgroundColor}
+                        unfilledColor={"transparent"}
                         animationMethod="spring"
                         animationConfig={{speed: 4}}>
                         <LinearGradient
@@ -258,7 +258,7 @@ export default class Swiper extends Component {
                                   style={{
                                       position: "absolute",
                                       bottom: 0
-                                  }}><Text style={FONTS.body4}>Skip</Text>
+                                  }}><Text style={FONTS.body4}>Skip (will be removed)</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
     },
     // Main container
     container: {
-        backgroundColor: appTheme.COLORS.backgroundColor,
         position: 'relative'
     },
     // Slide

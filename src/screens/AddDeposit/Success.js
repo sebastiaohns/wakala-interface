@@ -6,7 +6,11 @@ import { Ionicons } from "@expo/vector-icons";
 import NavHeader from "../../components/NavHeader";
 import ScreenCmpt from "../../components/ScreenCmpt";
 
+import Modal from "../../components/Banner";
+
 const Success = ({ navigation }) => {
+  const modalRef = React.useRef();
+
   return (
     <ScreenCmpt>
       <View

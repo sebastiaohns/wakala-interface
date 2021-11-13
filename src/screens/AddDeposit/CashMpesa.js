@@ -10,20 +10,18 @@ import ScreenCmpt from "../../components/ScreenCmpt";
 
 const ButtonsOptions = (props) => {
   return (
-    <View>
-      <TouchableOpacity
-        onPress={props.handleAction}
-        style={buttonStyles.container}
-      >
-        <View style={buttonStyles.icon}>
-          <Image source={props.image} style={buttonStyles.image} />
-        </View>
-        <View>
-          <Text style={buttonStyles.title}>{props.title}</Text>
-          <Text style={buttonStyles.subTitle}>{props.subTitle}</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      onPress={() => props.handleAction()}
+      style={buttonStyles.container}
+    >
+      <View style={buttonStyles.icon}>
+        <Image source={props.image} style={buttonStyles.image} />
+      </View>
+      <View>
+        <Text style={buttonStyles.title}>{props.title}</Text>
+        <Text style={buttonStyles.subTitle}>{props.subTitle}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 

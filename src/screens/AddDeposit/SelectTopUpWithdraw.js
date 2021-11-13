@@ -8,11 +8,9 @@ import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
 
 const ButtonsOptions = (props) => {
-  const navigation = useNavigation();
-
   return (
     <View>
-      <TouchableOpacity onPress={() => navigation.navigate(props.navigateTo)}>
+      <TouchableOpacity onPress={() => props.handleAction()}>
         <LinearGradient
           colors={["#F7EFFA", "#FCF8ED"]}
           start={[1, 0]}
@@ -36,6 +34,8 @@ const ButtonsOptions = (props) => {
 };
 
 const SelectTopUpWithdraw = () => {
+  const navigation = useNavigation();
+
   return (
     <ScreenCmpt>
       <View style={styles.container}>
@@ -49,19 +49,19 @@ const SelectTopUpWithdraw = () => {
             title="Top Up"
             subTitle="Buy cUSD"
             icon="arrow-up-circle"
-            navigateTo="Cash Mpesa"
             styleIcon={{
               transform: [{ rotate: "45deg" }],
             }}
+            handleAction={() => navigation.navigate("Cash Mpesa")}
           />
           <ButtonsOptions
             title="Withdraw"
             subTitle="Sell cUSD"
             icon="arrow-up-circle"
-            navigateTo=""
             styleIcon={{
               transform: [{ rotate: "135deg" }],
             }}
+            handleAction={() => navigation.navigate("")}
           />
         </View>
       </View>

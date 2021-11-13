@@ -101,55 +101,7 @@ function AccountAddress(props) {
           Copy
         </Text>
       </TouchableOpacity>
-
-      {/* Center view */}
-      <View
-        style={{
-          marginTop: RFPercentage(20),
-          width: "80%",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: COLORS.white,
-          height: RFPercentage(26),
-          borderRadius: RFPercentage(3),
-        }}
-      >
-        <View
-          style={{
-            width: "99%",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            backgroundColor: COLORS.lightGrey,
-            height: RFPercentage(25.6),
-            borderRadius: RFPercentage(3),
-          }}
-        >
-          <View style={{ width: "90%", marginTop: RFPercentage(7) }}>
-            <Text style={{ color: COLORS.black, fontSize: RFPercentage(2) }}>
-              0x2C8A946E800719602DA0201BCEFD2423a81B6771
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Copy button */}
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={{
-          marginTop: RFPercentage(3),
-          width: RFPercentage(10),
-          height: RFPercentage(5),
-          borderRadius: RFPercentage(10),
-          backgroundColor: COLORS.white,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={{ color: COLORS.black, fontSize: RFPercentage(2.2) }}>
-          Copy
-        </Text>
-      </TouchableOpacity>
-
+      
       {/* Button */}
       <View
         style={{ width: "100%", position: "absolute", bottom: RFPercentage(6) }}

@@ -204,4 +204,45 @@ const modalStyles = StyleSheet.create({
   },
 });
 
+const modal = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+
+  image: {
+    height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 16,
+    fontFamily: "Rubik_500Medium",
+    color: "#333333",
+    lineHeight: 24,
+    textAlign: "center",
+    marginBottom: 26,
+  },
+
+  text: {
+    fontSize: 14,
+    fontFamily: "Rubik_400Regular",
+    color: "#333333",
+    lineHeight: 21,
+    textAlign: "center",
+    marginBottom: 58,
+  },
+
+  button: {
+    fontSize: 20,
+    fontFamily: "Rubik_500Medium",
+    color: "#133FDB",
+    lineHeight: 24,
+    textAlign: "center",
+  },
+});
+
 export default ConfirmFunds;

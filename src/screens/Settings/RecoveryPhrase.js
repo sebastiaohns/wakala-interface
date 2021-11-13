@@ -4,13 +4,12 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { Ionicons } from '@expo/vector-icons';
 
 //components
-import Screen from '/src/components/Screen';
+import Screen from '../../components/Screen';
 //consts
-import theme from '/src/consts/theme';
-import MyAppButton from '/src/components/MyAppButton';
+import MyAppButton from '../../components/MyAppButton';
 import { COLORS } from '../../consts/theme';
 
-function RecoveryPhrase(props) {
+function RecoveryPhrase(props, {navigation}) {
     return (
         <Screen statusBarColor="#E5E5E5" style={{ flex: 1, justifyContent: 'flex-start', alignItems: "center", backgroundColor: "#E5E5E5" }}>
 
@@ -19,6 +18,7 @@ function RecoveryPhrase(props) {
 
                 {/* Back Icon */}
                 <Ionicons name="chevron-back" style={{ fontSize: RFPercentage(3.2), position: 'absolute', left: RFPercentage(2) }} color={COLORS.darkBlue} />
+            
 
                 {/* Heading */}
                 <Text style={{ color: "#333333", fontSize: RFPercentage(2.5), fontFamily: 'Rubik_500Medium' }}>

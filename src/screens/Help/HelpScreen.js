@@ -4,12 +4,12 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { Ionicons } from '@expo/vector-icons';
 
 //components
-import Screen from '/src/components/Screen';
+import Screen from '../../components/Screen';
 //config
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../../consts/theme';
-import { SIZES } from '../consts/theme';
+import { SIZES } from '../../consts/theme';
 
 
 const { height } = SIZES.height;
@@ -81,10 +81,7 @@ function HelpScreen(props) {
                         </View>
                         <View style={{ width: '80%', justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={styles.text}>
-                                Stay put. You will soon be able to
-                            </Text>
-                            <Text style={styles.text}>
-                                increase your account limit
+                                Stay put. You will soon be able to increase your account limit
                             </Text>
                         </View>
 
