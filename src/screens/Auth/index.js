@@ -162,7 +162,7 @@ export default function SignUpScreen({ navigation }) {
                         options={{
                           maskType: 'BRL',
                           withDDD: true,
-                          mask: '(999) 999 999'
+                          mask: '999 999 999 999'
                         }}
                         onChangeText={(formatted, extracted) => {
                           setNumber(formatted)
