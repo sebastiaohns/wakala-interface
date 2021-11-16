@@ -6,13 +6,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 import ScreenCmpt from "../components/ScreenCmpt";
-import NavHeader from "../components/NavHeader";
 
 const Success = () => {
   const navigation = useNavigation();
   return (
     <ScreenCmpt>
-      <NavHeader />
       <View style={styles.container}>
         <Ionicons
           name="checkmark-circle"
