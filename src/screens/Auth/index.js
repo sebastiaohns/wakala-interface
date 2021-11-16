@@ -130,15 +130,30 @@ export default function SignUpScreen({ navigation }) {
                     ]}
                     placeholder="Type your phone number here!"
                   >
-                    <Text style={FONTS.body3}>Kenya</Text>
-                    <TouchableOpacity>
-                      <View
-                        colors={COLORS.buttonGradient}
-                        style={styles.countrySelectorButton}
-                      >
-                        <Feather name="chevron-right" size={20} color="white" />
-                      </View>
-                    </TouchableOpacity>
+                    <TextInput
+                      style={styles.countryInput}
+                      placeholder="+254"
+                      onChangeText={(text) => setCountryCode(text)}
+                      defaultValue={countryCode}
+                    />
+                    <View style={styles.border} />
+                    <TextInputMask
+                      type={"custom"}
+                      value={number}
+                      options={{
+                        maskType: "BRL",
+                        withDDD: true,
+                        mask: "999 999 999 999",
+                      }}
+                      onChangeText={(formatted, extracted) => {
+                        setNumber(formatted);
+                      }}
+                      keyboardType={"phone-pad"}
+                      ref={inputRef}
+                      style={styles.numberInput}
+                      placeholder="Type here your phone number!"
+                      placeholderTextColor={COLORS.black}
+                    />
                   </View>
                 </View>
                 <View
