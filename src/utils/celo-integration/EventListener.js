@@ -15,7 +15,12 @@ const stopListeningToEvent = (subscriptionObject, callback) => {
     subscriptionObject.unsubscribe(callback);
 }
 
+const stopAllEventListeners = () => {
+    web3.eth.clearSubscriptions();
+}
+
 
 module.exports.listenToEvent = listenToEvent;
 module.exports.stopListeningToEvent = stopListeningToEvent;
+module.exports.stopAllEventListeners = stopAllEventListeners;
 
