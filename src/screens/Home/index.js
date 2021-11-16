@@ -9,16 +9,63 @@ import {
   LayoutAnimation,
   FlatList,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
-import RequestCard from "../../components/RequestCard";
-import { COLORS, SIZES, FONTS } from "../../consts/theme";
-import { HOME_EMPTY } from "../../assets/images";
-import rawData from "../../utils/DepositRequestData";
-
 import ScreenCmpt from "../../components/ScreenCmpt";
+import RequestCard from "../../components/RequestCard";
+
+import { COLORS, SIZES, FONTS } from "../../consts/theme";
+import rawData from "../../utils/DepositRequestData";
+import { HOME_EMPTY } from "../../assets/images";
+
+const NavMenu = () => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={navStyles.nav}>
+      <TouchableOpacity style={navStyles.buttonShadow}>
+        <LinearGradient
+          colors={[
+            "#133FDB",
+            "rgba(20, 63, 218, 0.994943)",
+            "rgba(183, 0, 77, 0.3)",
+          ]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1.2, y: 1.4 }}
+          locations={[0.09, 0.5754, 1]}
+          style={navStyles.button}
+        >
+          <Text style={navStyles.buttonText}>Send</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={navStyles.buttonShadow}
+        onPress={() => navigation.navigate("Select Operation")}
+      >
+        <LinearGradient
+          colors={["#133FDB", "rgba(183, 0, 77, 0.3)"]}
+          start={{ x: -0.5, y: -0.5 }}
+          end={{ x: 1, y: 1.5 }}
+          style={navStyles.button}
+        >
+          <Text style={navStyles.buttonText}>Add/Withdraw</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <View style={navStyles.qrButton}>
+          <MaterialCommunityIcons
+            name="qrcode-scan"
+            size={24}
+            color={COLORS.primary}
+          />
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const HomeScreen = ({ navigation }) => {
   const [isEmpty, setIsEmpty] = useState(true);
@@ -47,7 +94,7 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <ScreenCmpt>
+    <ScreenCmpt home={true}>
       <View style={styles.menu}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Ionicons name="list-outline" size={38} color={COLORS.primary} />
@@ -66,7 +113,6 @@ const HomeScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "#E5E5E5",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -80,47 +126,14 @@ const HomeScreen = ({ navigation }) => {
                 amount={item.amount}
                 stars={item.stars}
                 rating={item.rating}
+                type={item.type}
                 deleteItem={removeDepositRequestItem}
               />
             )}
           />
         </View>
       )}
-
-      <View style={navStyles.nav}>
-        <TouchableOpacity style={navStyles.buttonShadow}>
-          <LinearGradient
-            colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-            start={[1, 0]}
-            end={[0, 1]}
-            style={navStyles.button}
-          >
-            <Text style={navStyles.buttonText}>Send</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={navStyles.buttonShadow}
-          onPress={() => navigation.navigate("Select Top up Withdraw")}
-        >
-          <LinearGradient
-            colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-            start={[1, 0]}
-            end={[0, 1]}
-            style={navStyles.button}
-          >
-            <Text style={navStyles.buttonText}>Add/Withdraw</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={navStyles.qrButton}>
-            <MaterialCommunityIcons
-              name="qrcode-scan"
-              size={SIZES.width * 0.07}
-              color={COLORS.primary}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
+      <NavMenu />
     </ScreenCmpt>
   );
 };
@@ -128,23 +141,20 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
 
   menu: {
     width: "100%",
-    paddingLeft: 30,
-    paddingTop: Platform.OS == "android" ? 30 : 10,
-    paddingBottom: 10,
-    justifyContent: "flex-start",
-    backgroundColor: "#E5E5E5",
+    height: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 30,
   },
 
   wrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#E5E5E5",
     paddingHorizontal: 30,
   },
 
@@ -172,30 +182,40 @@ const navStyles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#F5F5F5",
 
-    shadowColor: "#000000",
-    shadowOffset: { width: -4, height: -4 },
+    shadowColor: "#000",
+    shadowOffset: {
+      width: -4,
+      height: -4,
+    },
     shadowOpacity: 0.08,
     shadowRadius: 4,
+
+    elevation: 4,
   },
 
   button: {
     justifyContent: "center",
-    borderRadius: 28,
-    height: 56,
-    width: SIZES.width * 0.36,
+    borderRadius: (SIZES.width * 0.12) / 2,
+    height: SIZES.width * 0.12,
+    minWidth: SIZES.width * 0.35,
   },
 
   buttonShadow: {
     shadowColor: "#133FDB",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 22,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 4,
+
+    elevation: 4,
   },
 
   buttonText: {
-    fontSize: FONTS.body5.fontSize,
-    lineHeight: FONTS.body5.lineHeight,
-    fontFamily: FONTS.body3.fontFamily,
+    fontSize: 13,
+    lineHeight: 15,
+    fontFamily: "Rubik_500Medium",
     textAlign: "center",
     color: "#FFF",
   },

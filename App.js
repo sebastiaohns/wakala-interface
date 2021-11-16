@@ -36,17 +36,23 @@ import ResetAccountScreen from "./src/screens/Settings/ResetAccountScreen";
 import SelectCurrencyScreen from "./src/screens/Settings/SelectCurrencyScreen";
 import ContactScreen from "./src/screens/Help/ContactScreen";
 
-import SelectTopUpWithdraw from "./src/screens/AddDeposit/SelectTopUpWithdraw";
-import CashMpesa from "./src/screens/AddDeposit/CashMpesa";
-import AddFunds from "./src/screens/AddDeposit/AddFunds";
-import ConfirmFunds from "./src/screens/AddDeposit/ConfirmFunds";
-import SendMpesa from "./src/screens/AddDeposit/SendMpesa";
-import Success from "./src/screens/AddDeposit/Success";
 import NavHeader from "./src/components/NavHeader";
 import SetPIN from "./src/screens/Auth/SetPIN";
 import ConnectPhone from "./src/screens/Auth/ConnectPhone";
 import PhoneVerificationLoader from "./src/screens/Auth/PhoneVerification";
 import VerifyCeloCodes from "./src/screens/Auth/VerifyCeloCodes";
+
+import SelectOperation from "./src/screens/PerformRequest/SelectOperation";
+import SelectCurrency from "./src/screens/PerformRequest/SelectCurrency";
+import AddFunds from "./src/screens/PerformRequest/AddFunds";
+import ConfirmFunds from "./src/screens/PerformRequest/ConfirmFunds";
+import ConfirmRequest from "./src/screens/PerformRequest/ConfirmRequest";
+import Success from "./src/components/Success";
+
+import AcceptRequest from "./src/screens/FulfillRequest/AcceptRequest";
+import ConfirmPayment from "./src/screens/FulfillRequest/ConfirmPayment";
+
+import Rate from "./src/components/Rate";
 
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -84,29 +90,29 @@ const Home = () => {
         options={{ headerShown: false }}
       />
       <Drawer.Screen
-      name="PinSuccess"
-      component={PinSuccessScreen}
-      options={{ headerShown: false }}
+        name="PinSuccess"
+        component={PinSuccessScreen}
+        options={{ headerShown: false }}
       />
       <Drawer.Screen
-      name="Settings"
-      component={SettingsScreen}
-      options={{ headerShown: false }}
+        name="Settings"
+        component={SettingsScreen}
+        options={{ headerShown: false }}
       />
       <Drawer.Screen
-      name="HelpScreen"
-      component={HelpScreen}
-      options={{ headerShown: false }}
+        name="HelpScreen"
+        component={HelpScreen}
+        options={{ headerShown: false }}
       />
       <Drawer.Screen
-      name="Contact"
-      component={ContactScreen}
-      options={{ headerShown: false }}
+        name="Contact"
+        component={ContactScreen}
+        options={{ headerShown: false }}
       />
       <Drawer.Screen
-      name="SelectCurrency"
-      component={SelectCurrencyScreen}
-      options={{ headerShown: false }}
+        name="SelectCurrency"
+        component={SelectCurrencyScreen}
+        options={{ headerShown: false }}
       />
 
       <Drawer.Screen name="Account Address" component={AccountAddress} />
@@ -146,7 +152,7 @@ const App = () => {
     return (
       <NavigationContainer>
         <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          <RootStack.Screen name="Landing" component={OnboardingScreen} />
+          {/* <RootStack.Screen name="Landing" component={OnboardingScreen} />
           
           <RootStack.Screen name="Signup">
             {(props) => <SignUpScreen {...props} onSignIn={handleSignIn} />}
@@ -155,7 +161,7 @@ const App = () => {
           <RootStack.Screen name="ToC">
             {(props) => <ToC {...props} onSignIn={handleSignIn} />}
           </RootStack.Screen>
-          <RootStack.Screen name="Home" component={Home}/>
+          
           <RootStack.Screen name="RecoveryPhrase" component={RecoveryPhrase}/>
           <RootStack.Screen name="PinDoNotMatch" component={PinDoNotMatch}/>
           <RootStack.Screen name="Account Address" component={AccountAddress}/>
@@ -164,14 +170,20 @@ const App = () => {
           <RootStack.Screen name="SetPIN" component={SetPIN} />
           <RootStack.Screen name="ConnectPhone" component={ConnectPhone} />
           <RootStack.Screen name="PhoneVerificationLoader" component={PhoneVerificationLoader} />
-          <RootStack.Screen name="VerifyCeloCodes" component={VerifyCeloCodes} />
-
-          <RootStack.Screen name="Select Top up Withdraw" component={SelectTopUpWithdraw}/>
-          <RootStack.Screen name="Cash Mpesa" component={CashMpesa}/>
-          <RootStack.Screen name="Add Funds" component={AddFunds}/>
-          <RootStack.Screen name="Confirm Funds" component={ConfirmFunds}/>
-          <RootStack.Screen name="Send Mpesa" component={SendMpesa}/>
-          <RootStack.Screen name="Success" component={Success}/>
+          <RootStack.Screen name="VerifyCeloCodes" component={VerifyCeloCodes} /> */}
+          <RootStack.Screen name="Home Screen" component={HomeScreen} />
+          <RootStack.Screen
+            name="Select Operation"
+            component={SelectOperation}
+          />
+          <RootStack.Screen name="Select Currency" component={SelectCurrency} />
+          <RootStack.Screen name="Add Funds" component={AddFunds} />
+          <RootStack.Screen name="Confirm Funds" component={ConfirmFunds} />
+          <RootStack.Screen name="Confirm Request" component={ConfirmRequest} />
+          <RootStack.Screen name="Accept Request" component={AcceptRequest} />
+          <RootStack.Screen name="Confirm Payment" component={ConfirmPayment} />
+          <RootStack.Screen name="Success" component={Success} />
+          <RootStack.Screen name="Rate" component={Rate} />
         </RootStack.Navigator>
       </NavigationContainer>
     );

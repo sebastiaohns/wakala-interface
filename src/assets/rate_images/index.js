@@ -1,0 +1,10 @@
+export const worried = require("./worried.png");
+export const worried_big = require("./worried_big.png");
+export const surprised = require("./surprised.png");
+export const surprised_big = require("./surprised_big.png");
+export const smile = require("./smile.png");
+export const smile_big = require("./smile_big.png");
+export const sad = require("./sad.png");
+export const sad_big = require("./sad_big.png");
+export const ambitious = require("./ambitious.png");
+export const ambitious_big = require("./ambitious_big.png");

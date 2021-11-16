@@ -33,7 +33,7 @@ function NavHeader(props) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 60,
+    height: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   button: {
     width: 40,
     height: 40,
-    marginLeft: -12,
+    marginLeft: 20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#333333",
     textAlign: "center",
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Rubik_500Medium",
   },
 
   dummyView: {

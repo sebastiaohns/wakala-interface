@@ -2,12 +2,17 @@ import React, { Fragment } from "react";
 import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-function ScreenCmpt({ children }) {
+function ScreenCmpt({ children, home }) {
   return (
     <Fragment>
       <SafeAreaView style={styles.topSafeArea} />
 
-      <SafeAreaView style={styles.bottomSafeArea}>
+      <SafeAreaView
+        style={[
+          styles.bottomSafeArea,
+          home == true && { backgroundColor: "#F5F5F5" },
+        ]}
+      >
         <View style={styles.statusBar}>
           <StatusBar
             translucent

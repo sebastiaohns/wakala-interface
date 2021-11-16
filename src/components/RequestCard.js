@@ -14,6 +14,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { SIZES } from "../consts/theme";
+import { useNavigation } from "@react-navigation/native";
 
 const swipeLeftContent = () => {
   return (
@@ -68,11 +69,15 @@ const RequestCard = (props) => {
   const [starsRate, setStarsRate] = useState();
   const [ratingsNumber, setRatingsNumber] = useState();
   const [visible, setVisible] = useState(true);
+  const [type, setType] = useState();
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     setAmount(props.amount);
     setStarsRate(props.stars);
     setRatingsNumber(props.rating);
+    setType(props.type);
   }, []);
 
   function handleDeleteItem() {
@@ -80,10 +85,24 @@ const RequestCard = (props) => {
   }
 
   return (
-    <TouchableOpacity activeOpacity={0.6}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("Accept Request", {
+          type: type,
+          value: amount,
+        })
+      }
+      activeOpacity={0.6}
+    >
       <Swipeable
         renderLeftActions={swipeLeftContent}
         overshootLeft={false}
+        onSwipeableLeftOpen={() =>
+          navigation.navigate("Accept Request", {
+            type: type,
+            value: amount,
+          })
+        }
         overshootRight={false}
         renderRightActions={swipeRightContent}
         onSwipeableRightOpen={handleDeleteItem}
@@ -91,28 +110,26 @@ const RequestCard = (props) => {
       >
         <FadeInOut visible={visible} duration={650}>
           <LinearGradient
-            colors={[
-              "rgba(255, 140, 161, 0.08)",
-              "rgba(252, 207, 47, 0.08)",
-              "rgba(255, 255, 255, 0.08)",
-              "rgba(248, 48, 180, 0.08)",
-              "rgba(47, 68, 252, 0.08)",
-            ]}
-            start={[0, 1]}
-            end={[1, 0]}
+            colors={["#FF8CA121", "#FCCF2F21", "#F830B421", "#2F44FC21"]}
+            start={[0.3, 0]}
+            end={[1, 0.3]}
             style={styles.container}
           >
             <View style={styles.imageContainer}>
               <View style={styles.img} />
             </View>
             <View style={styles.requestInfoContainer}>
-              <Text style={styles.title}>Deposit Request</Text>
+              <Text style={styles.title}>
+                {props.type === "deposit"
+                  ? "Deposit Request"
+                  : "Withdraw Request"}
+              </Text>
               <Text style={styles.subTitle}>Amount</Text>
               <Text style={styles.amount}>Ksh {amount}</Text>
             </View>
 
             <View style={styles.moreInfoContainer}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Entypo name="star" size={14} color="#002B4E" />
                 <Text
                   style={[
@@ -127,7 +144,15 @@ const RequestCard = (props) => {
                   {ratingsNumber} Ratings
                 </Text>
               </View>
-              <TouchableOpacity style={styles.viewButton}>
+              <TouchableOpacity
+                style={styles.viewButton}
+                onPress={() =>
+                  navigation.navigate("Accept Request", {
+                    type: type,
+                    value: amount,
+                  })
+                }
+              >
                 <Text style={styles.textButton}>View</Text>
               </TouchableOpacity>
             </View>
@@ -140,15 +165,17 @@ const RequestCard = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 120,
+    height: 100,
     width: SIZES.width * 0.9,
     borderRadius: 16,
+    borderColor: "#FFF",
+    borderWidth: 1,
     backgroundColor: "#FFF",
     flexDirection: "row",
     justifyContent: "space-between",
 
     padding: 15,
-    marginVertical: 5,
+    marginVertical: 16,
     marginLeft: SIZES.width * 0.05,
     marginRight: SIZES.width * 0.05,
   },
@@ -177,7 +204,8 @@ const styles = StyleSheet.create({
   subTitle: {
     fontFamily: "Rubik_400Regular",
     color: "#333333",
-    fontSize: 12,
+    fontSize: 9,
+    lineHeight: 10,
   },
 
   amount: {
@@ -197,12 +225,13 @@ const styles = StyleSheet.create({
     width: SIZES.width * 0.3,
     alignItems: "center",
     justifyContent: "space-between",
+
     // backgroundColor: "#0000FF",
   },
 
   viewButton: {
-    width: 100,
-    height: 40,
+    width: 80,
+    height: 30,
     borderWidth: 0.65,
     borderColor: "#949494",
     borderRadius: 30,
