@@ -44,7 +44,7 @@ import PhoneVerificationLoader from "./src/screens/Auth/PhoneVerification";
 import VerifyCeloCodes from "./src/screens/Auth/VerifyCeloCodes";
 
 import SelectOperation from "./src/screens/PerformRequest/SelectOperation";
-import SelectCurrency from "./src/screens/PerformRequest/SelectCurrency";
+import SelectPaymentMethod from "./src/screens/PerformRequest/SelectPaymentMethod";
 import AddFunds from "./src/screens/PerformRequest/AddFunds";
 import ConfirmFunds from "./src/screens/PerformRequest/ConfirmFunds";
 import ConfirmRequest from "./src/screens/PerformRequest/ConfirmRequest";
@@ -163,7 +163,10 @@ const App = () => {
             name="Select Operation"
             component={SelectOperation}
           />
-          <RootStack.Screen name="Select Currency" component={SelectCurrency} />
+          <RootStack.Screen
+            name="Select Payment Method"
+            component={SelectPaymentMethod}
+          />
           <RootStack.Screen name="Add Funds" component={AddFunds} />
           <RootStack.Screen name="Confirm Funds" component={ConfirmFunds} />
           <RootStack.Screen name="Confirm Request" component={ConfirmRequest} />

@@ -53,7 +53,9 @@ const SelectOperation = () => {
               transform: [{ rotate: "135deg" }],
             }}
             handleAction={() =>
-              navigation.navigate("Select Currency", { operation: "TopUp" })
+              navigation.navigate("Select Payment Method", {
+                operation: "TopUp",
+              })
             }
           />
           <OperationButton
@@ -64,7 +66,9 @@ const SelectOperation = () => {
               transform: [{ rotate: "45deg" }],
             }}
             handleAction={() =>
-              navigation.navigate("Select Currency", { operation: "Withdraw" })
+              navigation.navigate("Select Payment Method", {
+                operation: "Withdraw",
+              })
             }
           />
         </View>

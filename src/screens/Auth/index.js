@@ -55,7 +55,7 @@ export default function SignUpScreen({ navigation }) {
     await magic.user.logout();
     setUser("");
     console.log("logged out");
-    navigation.navigate("Home");
+    navigation.navigate("Drawer Nav");
   };
 
   // If user is logged in, fetch user wallet balance and the `message` variable value from the smart contract
