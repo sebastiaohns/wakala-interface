@@ -1,14 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 import ScreenCmpt from "../components/ScreenCmpt";
 
 const Success = () => {
+  const route = useRoute();
   const navigation = useNavigation();
+
   return (
     <ScreenCmpt>
       <View style={styles.container}>
@@ -23,7 +25,11 @@ const Success = () => {
           Your cUSD has been deposited to your wallet.
         </Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Home Screen")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Rate", { operation: route.params.operation })
+          }
+        >
           <LinearGradient
             colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
             start={[1, 0]}

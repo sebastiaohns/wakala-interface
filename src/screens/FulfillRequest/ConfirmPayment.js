@@ -91,9 +91,9 @@ const ConfirmPayment = () => {
   const closeModal = () => {
     modalRef.current?.closeModal();
     if (type === "deposit") {
-      navigation.navigate("Home Screen");
+      navigation.navigate("Rate", { operation: type });
     } else {
-      navigation.navigate("Success");
+      navigation.navigate("Success", { operation: type });
     }
   };
 

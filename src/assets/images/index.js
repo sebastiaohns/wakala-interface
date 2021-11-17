@@ -12,3 +12,9 @@ export const WAKALA_LOGO = require("./wakala-logo.png");
 export const MODEL = require("./model.png");
 export const SHARED = require("./shared.png");
 export const BORED = require("./Bored.png");
+
+export const GOVERNANCE = require("./governance.png");
+export const PARTICIPATE = require("./participate.png");
+export const PROPOSALS = require("./proposals.png");
+export const TOKENS = require("./tokens.png");
+export const VOTING = require("./voting.png");

@@ -84,8 +84,6 @@ const ConfirmRequest = () => {
   const value = route.params.value;
   const operation = route.params.operation;
 
-  // const [operation, setOperation] = useState("Withdraw");
-
   const openModal = () => {
     modalRef.current?.openModal();
   };
@@ -93,9 +91,13 @@ const ConfirmRequest = () => {
   const closeModal = () => {
     modalRef.current?.closeModal();
     if (operation === "TopUp") {
-      navigation.navigate("Success");
+      navigation.navigate("Success", {
+        operation: operation,
+      });
     } else {
-      navigation.navigate("Home Screen");
+      navigation.navigate("Rate", {
+        operation: operation,
+      });
     }
   };
 

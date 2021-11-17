@@ -1,299 +1,136 @@
-import React from "react";
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  View,
-  PanResponder,
-  Animated,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Entypo } from "@expo/vector-icons";
 
-import {
-  worried,
-  worried_big,
-  surprised,
-  surprised_big,
-  smile,
-  smile_big,
-  sad,
-  sad_big,
-  ambitious,
-  ambitious_big,
-} from "../assets/rate_images";
+import ScreenCmpt from "../components/ScreenCmpt";
+import NavHeader from "../components/NavHeader";
 
-const REACTIONS = [
-  {
-    label: "Worried",
-    src: worried,
-    bigSrc: worried_big,
-  },
-  {
-    label: "Sad",
-    src: sad,
-    bigSrc: sad_big,
-  },
-  {
-    label: "Strong",
-    src: ambitious,
-    bigSrc: ambitious_big,
-  },
-  {
-    label: "Happy",
-    src: smile,
-    bigSrc: smile_big,
-  },
-  {
-    label: "Surprised",
-    src: surprised,
-    bigSrc: surprised_big,
-  },
-];
-const WIDTH = 320;
-const DISTANCE = WIDTH / REACTIONS.length;
-const END = WIDTH - DISTANCE;
+import RatingSwiper from "./RatingSwiper";
 
-export default class Rate extends React.Component {
-  constructor(props) {
-    super(props);
-    this._pan = new Animated.Value(2 * DISTANCE);
+import { SIZES } from "../consts/theme";
+
+const Rate = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  const [rating, setRating] = useState("");
+  const [userStars, setUserStars] = useState(5);
+  const [numberOfTransactions, setNumberOfTransactions] = useState(180);
+  const [newTitle, setNewTitle] = useState("");
+
+  useEffect(() => {
+    if (route.params.operation == "TopUp") {
+      setNewTitle("Rate your community");
+    } else {
+      setNewTitle("Support community");
+    }
+  }, []);
+
+  function handleChange(newValue) {
+    setRating(newValue);
   }
 
-  componentWillMount() {
-    this._panResponder = PanResponder.create({
-      onMoveShouldSetResponderCapture: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
-      onPanResponderGrant: (e, gestureState) => {
-        this._pan.setOffset(this._pan._value);
-        this._pan.setValue(0);
-      },
-      onPanResponderMove: Animated.event([null, { dx: this._pan }]),
-      onPanResponderRelease: () => {
-        this._pan.flattenOffset();
-
-        let offset = Math.max(0, this._pan._value + 0);
-        if (offset < 0) return this._pan.setValue(0);
-        if (offset > END) return this._pan.setValue(END);
-
-        const modulo = offset % DISTANCE;
-        offset =
-          modulo >= DISTANCE / 2
-            ? offset + (DISTANCE - modulo)
-            : offset - modulo;
-
-        this.updatePan(offset);
-      },
-    });
-  }
-
-  updatePan(toValue) {
-    Animated.spring(this._pan, { toValue, friction: 7 }).start();
-  }
-
-  render() {
-    return (
+  return (
+    <ScreenCmpt>
+      <NavHeader showTitle={true} newTitle={newTitle} />
       <View style={styles.container}>
-        <View style={styles.wrap}>
-          <Text style={styles.welcome}>How are you feeling?</Text>
-
-          <View style={styles.line} />
-
-          <View style={styles.reactions}>
-            {REACTIONS.map((reaction, idx) => {
-              const u = idx * DISTANCE;
-              let inputRange = [u - 20, u, u + 20];
-              let scaleOutputRange = [1, 0.25, 1];
-              let topOutputRange = [0, 10, 0];
-              let colorOutputRange = ["#999", "#222", "#999"];
-
-              if (u - 20 < 0) {
-                inputRange = [u, u + 20];
-                scaleOutputRange = [0.25, 1];
-                topOutputRange = [10, 0];
-                colorOutputRange = ["#222", "#999"];
-              }
-
-              if (u + 20 > END) {
-                inputRange = [u - 20, u];
-                scaleOutputRange = [1, 0.25];
-                topOutputRange = [0, 10];
-                colorOutputRange = ["#999", "#222"];
-              }
-
-              return (
-                <TouchableOpacity
-                  onPress={() => this.updatePan(u)}
-                  activeOpacity={0.9}
-                  key={idx}
-                >
-                  <View style={styles.smileyWrap}>
-                    <Animated.Image
-                      source={reaction.src}
-                      style={[
-                        styles.smiley,
-                        {
-                          transform: [
-                            {
-                              scale: this._pan.interpolate({
-                                inputRange,
-                                outputRange: scaleOutputRange,
-                                extrapolate: "clamp",
-                              }),
-                            },
-                          ],
-                        },
-                      ]}
-                    />
-                  </View>
-
-                  <Animated.Text
-                    style={[
-                      styles.reactionText,
-                      {
-                        top: this._pan.interpolate({
-                          inputRange,
-                          outputRange: topOutputRange,
-                          extrapolate: "clamp",
-                        }),
-                        color: this._pan.interpolate({
-                          inputRange,
-                          outputRange: colorOutputRange,
-                          extrapolate: "clamp",
-                        }),
-                      },
-                    ]}
-                  >
-                    {reaction.label}
-                  </Animated.Text>
-                </TouchableOpacity>
-              );
-            })}
-            <Animated.View
-              {...this._panResponder.panHandlers}
-              style={[
-                styles.bigSmiley,
-                {
-                  transform: [
-                    {
-                      translateX: this._pan.interpolate({
-                        inputRange: [0, END],
-                        outputRange: [0, END],
-                        extrapolate: "clamp",
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              {REACTIONS.map((reaction, idx) => {
-                let inputRange = [
-                  (idx - 1) * DISTANCE,
-                  idx * DISTANCE,
-                  (idx + 1) * DISTANCE,
-                ];
-                let outputRange = [0, 1, 0];
-
-                if (idx == 0) {
-                  inputRange = [idx * DISTANCE, (idx + 1) * DISTANCE];
-                  outputRange = [1, 0];
-                }
-
-                if (idx == REACTIONS.length - 1) {
-                  inputRange = [(idx - 1) * DISTANCE, idx * DISTANCE];
-                  outputRange = [0, 1];
-                }
-                return (
-                  <Animated.Image
-                    key={idx}
-                    source={reaction.bigSrc}
-                    style={[
-                      styles.bigSmileyImage,
-                      {
-                        opacity: this._pan.interpolate({
-                          inputRange,
-                          outputRange,
-                          extrapolate: "clamp",
-                        }),
-                      },
-                    ]}
-                  />
-                );
-              })}
-            </Animated.View>
+        <View style={styles.infoContainer}>
+          <View style={styles.icon} />
+          <View style={styles.starsIcons}>
+            {[...Array(userStars)].map((e, i) => (
+              <Entypo key={i} name="star" size={12} color="#4840BB" />
+            ))}
+            <Text style={styles.starsText}> {userStars}</Text>
           </View>
+          <Text style={styles.transactionsText}>
+            {numberOfTransactions} successful transactions
+          </Text>
+        </View>
+
+        <View style={styles.reactionContainer}>
+          <Text style={styles.text}>
+            How was your experience with the community member?
+          </Text>
+          <RatingSwiper rating={rating} onChange={handleChange} />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Home Screen")}
+          >
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    );
-  }
-}
-
-const size = 42;
+    </ScreenCmpt>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    margin: 30,
+    marginVertical: SIZES.height > 700 ? 70 : 30,
     alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  wrap: {
-    width: WIDTH,
-    marginBottom: 50,
-  },
-  welcome: {
-    fontSize: 18,
-    textAlign: "center",
-    color: "#777",
-    fontWeight: "600",
-    fontFamily: "Avenir",
-    marginBottom: 50,
-  },
-  reactions: {
-    flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "transparent",
   },
-  smileyWrap: {
-    width: DISTANCE,
-    height: DISTANCE,
-    justifyContent: "center",
+
+  infoContainer: {
+    width: "100%",
     alignItems: "center",
   },
-  smiley: {
-    width: size,
-    height: size,
-    borderRadius: size / 2,
-    backgroundColor: "#c7ced3",
+
+  icon: {
+    width: 59,
+    height: 59,
+    borderRadius: 30,
+    backgroundColor: "#FF8CA1",
   },
-  bigSmiley: {
-    width: DISTANCE,
-    height: DISTANCE,
-    borderRadius: DISTANCE / 2,
-    backgroundColor: "#ffb18d",
-    position: "absolute",
-    top: 0,
-    left: 0,
+
+  starsIcons: {
+    flexDirection: "row",
+    marginTop: 18,
   },
-  bigSmileyImage: {
-    width: DISTANCE,
-    height: DISTANCE,
-    position: "absolute",
-    top: 0,
-    left: 0,
-  },
-  reactionText: {
+
+  starsText: {
     fontSize: 12,
-    textAlign: "center",
-    color: "#999",
-    fontWeight: "400",
-    fontFamily: "Avenir",
-    marginTop: 5,
+    color: "#4840BB",
+    fontFamily: "Inter_700Bold",
   },
-  line: {
-    height: 4 / PixelRatio.get(),
-    backgroundColor: "#eee",
-    width: WIDTH - (DISTANCE - size),
-    left: (DISTANCE - size) / 2,
-    top: DISTANCE / 2 + 2 / PixelRatio.get(),
+
+  transactionsText: {
+    fontSize: 14,
+    color: "#333333",
+    fontFamily: "Rubik_400Regular",
+    marginTop: 10,
+  },
+
+  reactionContainer: {
+    alignItems: "center",
+  },
+
+  text: {
+    fontSize: 16,
+    color: "#333333",
+    textAlign: "center",
+    fontFamily: "Rubik_500Medium",
+    marginBottom: 50,
+  },
+
+  button: {
+    width: 150,
+    height: 50,
+    borderRadius: 24,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    marginTop: 30,
+  },
+
+  buttonText: {
+    fontSize: 18,
+    color: "#4840BB",
+    textAlign: "center",
+    fontFamily: "Rubik_500Medium",
   },
 });
+
+export default Rate;

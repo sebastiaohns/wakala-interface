@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -52,15 +53,19 @@ import Success from "./src/components/Success";
 import AcceptRequest from "./src/screens/FulfillRequest/AcceptRequest";
 import ConfirmPayment from "./src/screens/FulfillRequest/ConfirmPayment";
 
+import CardInfo from "./src/screens/Governance/CardInfo";
+import Join from "./src/screens/Governance/Join";
+
 import Rate from "./src/components/Rate";
 
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const Home = () => {
+const DrawerNav = () => {
   return (
     <Drawer.Navigator
       screenOptions={{
+        headerShown: false,
         drawerType: "front",
         drawerActiveTintColor: COLORS.primary,
         drawerActiveBackgroundColor: "#F5F5F5",
@@ -84,40 +89,16 @@ const Home = () => {
       }}
       drawerContent={(props) => <CustomDrawer {...props} />}
     >
-      <Drawer.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="PinSuccess"
-        component={PinSuccessScreen}
-        options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="HelpScreen"
-        component={HelpScreen}
-        options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="Contact"
-        component={ContactScreen}
-        options={{ headerShown: false }}
-      />
-      <Drawer.Screen
-        name="SelectCurrency"
-        component={SelectCurrencyScreen}
-        options={{ headerShown: false }}
-      />
-
+      <Drawer.Screen name="Home Screen" component={HomeScreen} />
+      <Drawer.Screen name="PinSuccess" component={PinSuccessScreen} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="HelpScreen" component={HelpScreen} />
+      <Drawer.Screen name="Contact" component={ContactScreen} />
+      <Drawer.Screen name="SelectCurrency" component={SelectCurrencyScreen} />
       <Drawer.Screen name="Account Address" component={AccountAddress} />
       <Drawer.Screen name="Pin" component={PinDoNotMatch} />
       <Drawer.Screen name="Support" component={ContactSupportScreen} />
+      <Drawer.Screen name="Governance" component={CardInfo} />
     </Drawer.Navigator>
   );
 };
@@ -171,7 +152,7 @@ const App = () => {
           <RootStack.Screen name="ConnectPhone" component={ConnectPhone} />
           <RootStack.Screen name="PhoneVerificationLoader" component={PhoneVerificationLoader} />
           <RootStack.Screen name="VerifyCeloCodes" component={VerifyCeloCodes} /> */}
-          <RootStack.Screen name="Home Screen" component={HomeScreen} />
+          <RootStack.Screen name="Drawer Nav" component={DrawerNav} />
           <RootStack.Screen
             name="Select Operation"
             component={SelectOperation}
@@ -184,6 +165,8 @@ const App = () => {
           <RootStack.Screen name="Confirm Payment" component={ConfirmPayment} />
           <RootStack.Screen name="Success" component={Success} />
           <RootStack.Screen name="Rate" component={Rate} />
+
+          <RootStack.Screen name="Join" component={Join} />
         </RootStack.Navigator>
       </NavigationContainer>
     );
