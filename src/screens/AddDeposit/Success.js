@@ -1,15 +1,10 @@
-import React, { Fragment, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+
+import NavHeader from "../../components/NavHeader";
+import ScreenCmpt from "../../components/ScreenCmpt";
 
 import Modal from "../../components/Banner";
 
@@ -17,62 +12,44 @@ const Success = ({ navigation }) => {
   const modalRef = React.useRef();
 
   return (
-    <Fragment>
-      <SafeAreaView
-        style={{ flex: 0, backgroundColor: "rgba(247, 239, 250, 1.0)" }}
-      />
+    <ScreenCmpt>
+      <View
+        style={{
+          flex: 1,
+          marginHorizontal: 30,
+          justifyContent: "space-between",
+        }}
+      >
+        <NavHeader />
 
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FCF8ED" }}>
-        <LinearGradient
-          colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
-          start={[1, 0]}
-          end={[1, 1]}
-          style={styles.container}
+        <View>
+          <Ionicons
+            name="checkmark-circle"
+            size={36}
+            color="#4840BB"
+            style={{ textAlign: "center", marginBottom: 12 }}
+          />
+          <Text style={styles.title}>Transaction Successful!</Text>
+          <Text style={styles.text}>
+            Your cUSD has been deposited to your wallet.
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={navStyles.buttonShadow}
+          onPress={() => navigation.navigate("Home")}
         >
-          <View
-            style={{
-              flex: 1,
-              marginHorizontal: 30,
-              justifyContent: "space-between",
-            }}
+          <LinearGradient
+            colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
+            start={[1, 0]}
+            end={[0, 1]}
+            style={navStyles.button}
           >
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.nav}
-            >
-              <Feather name="chevron-left" size={32} color="#4840BB" />
-            </TouchableOpacity>
-
-            <View>
-              <Ionicons
-                name="checkmark-circle"
-                size={36}
-                color="#4840BB"
-                style={{ textAlign: "center", marginBottom: 12 }}
-              />
-              <Text style={styles.title}>Transaction Successful!</Text>
-              <Text style={styles.text}>
-                Your cUSD has been deposited to your wallet.
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={navStyles.buttonShadow}
-              onPress={() => navigation.navigate("Home")}
-            >
-              <LinearGradient
-                colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
-                start={[1, 0]}
-                end={[0, 1]}
-                style={navStyles.button}
-              >
-                <Text style={navStyles.buttonText}>Okay</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-      </SafeAreaView>
-    </Fragment>
+            <Text style={navStyles.buttonText}>Okay</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </ScreenCmpt>
   );
 };
 

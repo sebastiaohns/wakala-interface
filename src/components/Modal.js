@@ -20,7 +20,7 @@ const Modal = React.forwardRef((props, ref) => {
     }),
     shadow: useAnimatedStyle(() => {
       return {
-        display: isShadowVisible.value ? "flex" : "none",
+        zIndex: isShadowVisible.value ? 2 : -1,
         opacity: shadowOpacity.value,
       };
     }),
@@ -28,23 +28,19 @@ const Modal = React.forwardRef((props, ref) => {
 
   const openModal = () => {
     isShadowVisible.value = true;
-    shadowOpacity.value = withSpring(0.5, {
-      duration: 1000,
-    });
+    shadowOpacity.value = withSpring(0.5);
     height.value = withSpring(props.style.height, {
-      duration: 2000,
+      damping: 15,
     });
   };
 
   const closeModal = () => {
-    height.value = withTiming(0, {
-      duration: 500,
-    });
+    height.value = withTiming(0);
     shadowOpacity.value = withTiming(0, {
-      duration: 1000,
+      duration: 200,
     });
     isShadowVisible.value = withTiming(false, {
-      duration: 1500,
+      duration: 200,
     });
   };
 
@@ -68,14 +64,13 @@ const styles = StyleSheet.create({
     height: "100%",
     position: "absolute",
     backgroundColor: "#000",
-    zIndex: 2,
   },
   modal: {
     width: "100%",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     backgroundColor: "#FFF",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
     zIndex: 3,

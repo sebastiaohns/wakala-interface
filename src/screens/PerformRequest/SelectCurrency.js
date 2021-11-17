@@ -1,14 +1,16 @@
-import React, { Fragment } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { Fragment, useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import { useNavigation, useRoute } from "@react-navigation/native";
+
+import ScreenCmpt from "../../components/ScreenCmpt";
+import NavHeader from "../../components/NavHeader";
+import Banner from "../../components/Banner";
+
 import { MODEL, CASH, MPESA } from "../../assets/images";
 import { SIZES } from "../../consts/theme";
 
-import Banner from "../../components/Banner";
-import NavHeader from "../../components/NavHeader";
-import ScreenCmpt from "../../components/ScreenCmpt";
-
-const ButtonsOptions = (props) => {
+const CurrencyButton = (props) => {
   return (
     <TouchableOpacity
       onPress={() => props.handleAction()}
@@ -35,10 +37,7 @@ const BannerContent = (props) => {
       </Text>
 
       <TouchableOpacity
-        style={{
-          width: 100,
-          alignSelf: "center",
-        }}
+        style={bannerStyles.buttonContainer}
         onPress={() => props.bannerRef.current?.closeBanner()}
       >
         <Text style={bannerStyles.button}>Dismiss</Text>
@@ -47,27 +46,34 @@ const BannerContent = (props) => {
   );
 };
 
-const CashMpesa = () => {
-  const navigation = useNavigation();
+const SelectCurrency = () => {
+  const route = useRoute();
   const bannerRef = React.useRef();
+  const navigation = useNavigation();
+
+  const [operation] = useState(route.params.operation);
 
   return (
     <Fragment>
       <ScreenCmpt>
-        <View style={{ marginHorizontal: 30 }}>
-          <NavHeader />
-
+        <NavHeader />
+        <View style={styles.container}>
           <Text style={styles.title}>
-            How do you want to top up your wallet?
+            How do you want to{" "}
+            {operation === "TopUp" ? "top up" : "withdraw from"} your wallet?
           </Text>
 
-          <ButtonsOptions
+          <CurrencyButton
             title="Mpesa"
             subTitle="Deposit funds using mpesa"
             image={MPESA}
-            handleAction={() => navigation.navigate("Add Funds")}
+            handleAction={() =>
+              navigation.navigate("Add Funds", {
+                operation: operation,
+              })
+            }
           />
-          <ButtonsOptions
+          <CurrencyButton
             title="Cash"
             subTitle="Deposit funds through a cash agent"
             image={CASH}
@@ -75,7 +81,6 @@ const CashMpesa = () => {
           />
         </View>
       </ScreenCmpt>
-
       <Banner
         ref={bannerRef}
         style={{ height: 350 }}
@@ -86,52 +91,17 @@ const CashMpesa = () => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 16,
-    fontFamily: "Rubik_500Medium",
-    color: "#333333",
-    lineHeight: 19,
-    textAlign: "center",
-  },
-});
-
-const buttonStyles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginVertical: 40,
-    paddingRight: 50,
-  },
-
-  icon: {
-    width: 59,
-    height: 63,
-    borderRadius: 8,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 15,
-  },
-
-  image: {
-    height: 30,
-    maxWidth: SIZES.width * 0.8,
-    resizeMode: "contain",
+    margin: 30,
   },
 
   title: {
-    fontSize: 18,
-    fontFamily: "Rubik_500Medium",
-    color: "#4840BB",
-    lineHeight: 22,
-  },
-
-  subTitle: {
     fontSize: 16,
-    fontFamily: "Inter_500Medium",
-    color: "#A2A3A2",
-    lineHeight: 28,
+    lineHeight: 19,
+    color: "#333333",
+    marginBottom: 65,
+    textAlign: "center",
+    fontFamily: "Rubik_500Medium",
   },
 });
 
@@ -139,6 +109,7 @@ const bannerStyles = StyleSheet.create({
   container: {
     height: "100%",
     paddingVertical: 20,
+    alignItems: "center",
     justifyContent: "space-between",
   },
 
@@ -151,31 +122,76 @@ const bannerStyles = StyleSheet.create({
 
   title: {
     fontSize: 18,
-    fontFamily: "Rubik_500Medium",
-    color: "#2C2948",
     lineHeight: 22,
+    color: "#2C2948",
     textAlign: "center",
+    fontFamily: "Rubik_500Medium",
   },
 
   text: {
     fontSize: 14,
-    fontFamily: "Rubik_400Regular",
-    color: "#1C1939CC",
     lineHeight: 21,
+    color: "#1C1939",
     textAlign: "center",
+    fontFamily: "Rubik_400Regular",
+  },
+
+  buttonContainer: {
+    height: 50,
+    width: 100,
+    justifyContent: "center",
   },
 
   button: {
     fontSize: 14,
-    fontFamily: "Rubik_700Bold",
-    color: "#4840BB",
     lineHeight: 23,
+    color: "#4840BB",
     textAlign: "center",
-    marginTop: 30,
-    alignSelf: "center",
-    alignItems: "center",
-    textAlignVertical: "center",
+    fontFamily: "Rubik_700Bold",
   },
 });
 
-export default CashMpesa;
+const iconWidth = (SIZES.width - 100) / 4 - 10;
+const iconHeight = iconWidth + 4;
+
+const buttonStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginBottom: 70,
+    paddingRight: 70,
+  },
+
+  icon: {
+    width: iconWidth,
+    height: iconHeight,
+    borderRadius: 8,
+    marginRight: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+  },
+
+  image: {
+    height: 35,
+    maxWidth: SIZES.width,
+    resizeMode: "contain",
+  },
+
+  title: {
+    fontSize: 18,
+    lineHeight: 22,
+    color: "#4840BB",
+    fontFamily: "Rubik_500Medium",
+  },
+
+  subTitle: {
+    fontSize: 16,
+    lineHeight: 28,
+    color: "#A2A3A2",
+    fontFamily: "Inter_500Medium",
+  },
+});
+
+export default SelectCurrency;

@@ -96,7 +96,7 @@ const SwipeButton = (props) => {
         opacity: interpolate(
           X.value,
           InterpolateXInput,
-          [0.7, 0],
+          [1, 0],
           Extrapolate.CLAMP
         ),
         transform: [

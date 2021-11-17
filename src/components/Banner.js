@@ -8,6 +8,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { SIZES } from "../consts/theme";
 
+import { LinearGradient } from "expo-linear-gradient";
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+
 const Banner = React.forwardRef((props, ref) => {
   const bottom = useSharedValue(-350);
   const shadowOpacity = useSharedValue(0);
@@ -21,7 +25,7 @@ const Banner = React.forwardRef((props, ref) => {
     }),
     shadow: useAnimatedStyle(() => {
       return {
-        display: isShadowVisible.value ? "flex" : "none",
+        zIndex: isShadowVisible.value ? 2 : -1,
         opacity: shadowOpacity.value,
       };
     }),
@@ -29,23 +33,19 @@ const Banner = React.forwardRef((props, ref) => {
 
   const openBanner = () => {
     isShadowVisible.value = true;
-    shadowOpacity.value = withSpring(0.5, {
-      duration: 1000,
-    });
+    shadowOpacity.value = withSpring(0.5);
     bottom.value = withSpring(SIZES.height / 2 - props.style.height / 2, {
-      duration: 2000,
+      damping: 15,
     });
   };
 
   const closeBanner = () => {
-    bottom.value = withTiming(-props.style.height, {
-      duration: 500,
-    });
+    bottom.value = withTiming(-props.style.height);
     shadowOpacity.value = withTiming(0, {
-      duration: 1000,
+      duration: 200,
     });
     isShadowVisible.value = withTiming(false, {
-      duration: 1500,
+      duration: 200,
     });
   };
 
@@ -54,11 +54,14 @@ const Banner = React.forwardRef((props, ref) => {
   return (
     <>
       <Animated.View style={[styles.shadow, AnimatedStyles.shadow]} />
-      <Animated.View
+      <AnimatedLinearGradient
+        colors={["#F7EFFA", "#FCF8ED"]}
+        start={[1, 0]}
+        end={[1, 1]}
         style={[{ ...props.style }, styles.modal, AnimatedStyles.modal]}
       >
         {props.content}
-      </Animated.View>
+      </AnimatedLinearGradient>
     </>
   );
 });
@@ -69,8 +72,8 @@ const styles = StyleSheet.create({
     height: "100%",
     position: "absolute",
     backgroundColor: "#000",
-    zIndex: 2,
   },
+
   modal: {
     width: "auto",
     borderRadius: 16,
