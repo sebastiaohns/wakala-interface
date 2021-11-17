@@ -1,5 +1,7 @@
+import "node-libs-react-native/globals";
 import * as React from "react";
-
+import "./global";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -60,6 +62,11 @@ import Rate from "./src/components/Rate";
 
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+LogBox.ignoreLogs([
+  "Warning: The provided value 'moz",
+  "Warning: The provided value 'ms-stream",
+]);
 
 const DrawerNav = () => {
   return (
