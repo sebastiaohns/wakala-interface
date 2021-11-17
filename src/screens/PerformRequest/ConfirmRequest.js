@@ -13,6 +13,8 @@ import Modal from "../../components/Modal";
 import { COLORS, SIZES } from "../../consts/theme";
 import { BORED } from "../../assets/images";
 
+// import CeloController from "../../utils/celo-integration/Controller";
+
 const CardElement = (props) => {
   return (
     <View style={cardStyles.container}>
@@ -84,6 +86,11 @@ const ConfirmRequest = () => {
   const value = route.params.value;
   const operation = route.params.operation;
 
+  // const callRequest = () => {
+  //   const celoController = new CeloController();
+  //   celoController.onConfirmDeposit(value);
+  // };
+
   const openModal = () => {
     modalRef.current?.openModal();
   };
@@ -141,6 +148,7 @@ const ConfirmRequest = () => {
           {operation === "TopUp" && <CardElement value={value} />}
           <View>
             <SwipeButton handleAction={openModal} />
+            {/* <SwipeButton handleAction={callRequest} /> */}
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.goBack()}

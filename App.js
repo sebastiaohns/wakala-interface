@@ -133,8 +133,7 @@ const App = () => {
     return (
       <NavigationContainer>
         <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          {/* <RootStack.Screen name="Landing" component={OnboardingScreen} />
-          
+          <RootStack.Screen name="Landing" component={OnboardingScreen} />
           <RootStack.Screen name="Signup">
             {(props) => <SignUpScreen {...props} onSignIn={handleSignIn} />}
           </RootStack.Screen>
@@ -142,16 +141,23 @@ const App = () => {
           <RootStack.Screen name="ToC">
             {(props) => <ToC {...props} onSignIn={handleSignIn} />}
           </RootStack.Screen>
-          
-          <RootStack.Screen name="RecoveryPhrase" component={RecoveryPhrase}/>
-          <RootStack.Screen name="PinDoNotMatch" component={PinDoNotMatch}/>
-          <RootStack.Screen name="Account Address" component={AccountAddress}/>
-          <RootStack.Screen name="ResetAccount" component={ResetAccountScreen}/>
-
+          <RootStack.Screen name="RecoveryPhrase" component={RecoveryPhrase} />
+          <RootStack.Screen name="PinDoNotMatch" component={PinDoNotMatch} />
+          <RootStack.Screen name="Account Address" component={AccountAddress} />
+          <RootStack.Screen
+            name="ResetAccount"
+            component={ResetAccountScreen}
+          />
           <RootStack.Screen name="SetPIN" component={SetPIN} />
           <RootStack.Screen name="ConnectPhone" component={ConnectPhone} />
-          <RootStack.Screen name="PhoneVerificationLoader" component={PhoneVerificationLoader} />
-          <RootStack.Screen name="VerifyCeloCodes" component={VerifyCeloCodes} /> */}
+          <RootStack.Screen
+            name="PhoneVerificationLoader"
+            component={PhoneVerificationLoader}
+          />
+          <RootStack.Screen
+            name="VerifyCeloCodes"
+            component={VerifyCeloCodes}
+          />
           <RootStack.Screen name="Drawer Nav" component={DrawerNav} />
           <RootStack.Screen
             name="Select Operation"
