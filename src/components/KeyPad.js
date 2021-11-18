@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
-import { SIZES, COLORS } from "../consts/theme";
-
-import { useEffect } from "react/cjs/react.development";
+import { SIZES } from "../consts/theme";
 
 const KeyPad = (props) => {
   const [value, setValue] = useState("");

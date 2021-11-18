@@ -10,7 +10,7 @@ import Banner from "../../components/Banner";
 import { MODEL, CASH, MPESA } from "../../assets/images";
 import { SIZES } from "../../consts/theme";
 
-const CurrencyButton = (props) => {
+const PaymentMethodButton = (props) => {
   return (
     <TouchableOpacity
       onPress={() => props.handleAction()}
@@ -63,7 +63,7 @@ const SelectCurrency = () => {
             {operation === "TopUp" ? "top up" : "withdraw from"} your wallet?
           </Text>
 
-          <CurrencyButton
+          <PaymentMethodButton
             title="Mpesa"
             subTitle="Deposit funds using mpesa"
             image={MPESA}
@@ -73,7 +73,7 @@ const SelectCurrency = () => {
               })
             }
           />
-          <CurrencyButton
+          <PaymentMethodButton
             title="Cash"
             subTitle="Deposit funds through a cash agent"
             image={CASH}
