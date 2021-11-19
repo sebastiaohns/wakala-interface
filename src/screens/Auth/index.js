@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Dimensions,
   SafeAreaView,
@@ -16,12 +16,19 @@ import { Magic } from "@magic-sdk/react-native";
 import { TextInputMask } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HeaderTitle from "../../components/HeaderTitle";
+import PhoneInput from "react-native-phone-number-input";
 
 export default function SignUpScreen({ navigation }) {
   const [countryCode, setCountryCode] = React.useState("+254");
   const [number, setNumber] = React.useState("");
   const [user, setUser] = React.useState("");
-  const inputRef = React.createRef();
+  // const inputRef = React.createRef();
+
+  // phone number input
+  const [value, setValue] = useState("");
+  const [valid, setValid] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const phoneInput = useRef();
 
   const magic = new Magic("pk_live_5B2A9951805695BB", {
     network: {
@@ -31,20 +38,16 @@ export default function SignUpScreen({ navigation }) {
 
   // Trigger magic link for user to login / generate wallet
   const login = async () => {
-    if (number === "") {
-      /**
-       * For test purposes, leave the field blank to move to the next screen
-       */
-      navigation.navigate("VerifyNumber");
-      return;
-    }
     try {
+      const checkValid = phoneInput.current?.isValidNumber();
+      setValid(checkValid ? checkValid : false);
       await magic.auth.loginWithSMS({
-        phoneNumber: countryCode + number, //pass the phone input value to get otp sms
+        phoneNumber: value, //pass the phone input value to get otp sms
       });
       // Consume decentralized identity (DID)
       magic.user.getMetadata().then(setUser);
       //TODO Navigate to Terms and Conditions Page
+      navigation.navigate("ToC");
     } catch (err) {
       alert(err);
     }
@@ -55,7 +58,6 @@ export default function SignUpScreen({ navigation }) {
     await magic.user.logout();
     setUser("");
     console.log("logged out");
-    navigation.navigate("Drawer Nav");
   };
 
   // If user is logged in, fetch user wallet balance and the `message` variable value from the smart contract
@@ -96,7 +98,19 @@ export default function SignUpScreen({ navigation }) {
                   borderRadius: 10,
                 }}
               >
-                <View
+                <PhoneInput
+                  ref={phoneInput}
+                  defaultValue={value}
+                  defaultCode="KE"
+                  onChangeFormattedText={(text) => {
+                    setValue(text);
+                  }}
+                  withDarkTheme
+                  withShadow
+                  autoFocus
+                />
+
+                {/* <View
                   style={[
                     styles.numberInputBlock,
                     {
@@ -105,8 +119,8 @@ export default function SignUpScreen({ navigation }) {
                       borderBottomLeftRadius: 0,
                     },
                   ]}
-                >
-                  <View
+                > */}
+                {/* <View
                     style={[
                       styles.countryInput,
                       {
@@ -116,9 +130,9 @@ export default function SignUpScreen({ navigation }) {
                     ]}
                   >
                     <CountryFlag isoCode="ke" size={21} />
-                  </View>
-                  <View style={styles.border} />
-                  <View
+                  </View> */}
+                {/* <View style={styles.border} /> */}
+                {/* <View
                     style={[
                       styles.numberInput,
                       {
@@ -154,9 +168,9 @@ export default function SignUpScreen({ navigation }) {
                       placeholder="Type here your phone number!"
                       placeholderTextColor={COLORS.black}
                     />
-                  </View>
-                </View>
-                <View
+                  </View> */}
+                {/* </View> */}
+                {/* <View
                   style={[
                     styles.border,
                     {
@@ -164,8 +178,8 @@ export default function SignUpScreen({ navigation }) {
                       height: 1,
                     },
                   ]}
-                />
-                <View
+                /> */}
+                {/* <View
                   style={[
                     styles.numberInputBlock,
                     { borderBottomRightRadius: 10, borderBottomLeftRadius: 10 },
@@ -195,7 +209,7 @@ export default function SignUpScreen({ navigation }) {
                     placeholder="Type here your phone number!"
                     placeholderTextColor={COLORS.black}
                   />
-                </View>
+                </View> */}
               </View>
             </View>
 
