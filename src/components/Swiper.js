@@ -254,12 +254,6 @@ export default class Swiper extends Component {
                         </LinearGradient>
                     </ProgressCircle>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("Signup")}
-                                  style={{
-                                      position: "absolute",
-                                      bottom: 0
-                                  }}><Text style={FONTS.body4}>Skip (will be removed)</Text>
-                </TouchableOpacity>
             </View>
         );
     }

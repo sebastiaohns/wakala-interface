@@ -1,17 +1,14 @@
 import "node-libs-react-native/globals";
 import * as React from "react";
 import "./global";
-import { LogBox,
-    // Expo workaround... will be removed in build
-  AsyncStorage } from "react-native";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import AppLoading from "expo-app-loading";
-// Expo workaround... will be used in build
-//import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useFonts,
   Inter_400Regular,
