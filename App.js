@@ -1,10 +1,8 @@
 import "node-libs-react-native/globals";
 import * as React from "react";
 import "./global";
-import { LogBox } from "react-native";
+//import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import AppLoading from "expo-app-loading";
@@ -26,29 +24,32 @@ import { DMSans_700Bold, DMSans_400Regular } from "@expo-google-fonts/dm-sans";
 
 import globalStore from "./src/redux/GlobalStore";
 import Screens from "./src/screens";
+import {Magic} from "@magic-sdk/react-native";
 
 
 const store = createStore(globalStore);
+const magic = new Magic("pk_live_5B2A9951805695BB", {
+  network: {
+    rpcUrl: "https://alfajores-forno.celo-testnet.org",
+  },
+});
 
-
-const RootStack = createStackNavigator();
-
-LogBox.ignoreLogs([
+/*LogBox.ignoreLogs([
   "Warning: The provided value 'moz",
   "Warning: The provided value 'ms-stream",
-]);
+]);*/
 
-let hasBoarded = false;
 const loadAppSession = async () => {
   try {
     let user = await AsyncStorage.getItem('user')
     let data = JSON.parse(user)
-    let action = {type: "INIT", value: data}
+    let action = {type: "INIT", value: {...data, magic: magic}}
+    console.log(data)
     store.dispatch(action)
-    hasBoarded = data.finishedBoarding === true
     return true
   } catch (err) {
     console.log(err)
+    return true
   }
 }
 
@@ -65,17 +66,6 @@ const App = () => {
     DMSans_700Bold,
     DMSans_400Regular,
   });
-
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [state, setState] = React.useState(store.getState());
-  const handleSignIn = () => {
-    // TODO implement real sign in mechanism
-    setIsAuthenticated(true);
-  };
-  const handleSignOut = () => {
-    // TODO implement real sign in mechanism
-    setIsAuthenticated(false);
-  };
 
   let [isReady, setReady] = React.useState(false)
   if (!isReady || !fontsLoaded) {

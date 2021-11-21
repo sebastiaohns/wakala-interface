@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import {
-    Dimensions,
+    Dimensions, KeyboardAvoidingView, Platform,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -9,21 +9,17 @@ import {
     View,
 } from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
-import CountryFlag from "react-native-country-flag";
 import {COLORS, FONTS, SIZES} from "../../consts/theme";
-import {Feather} from "@expo/vector-icons";
-import {Magic} from "@magic-sdk/react-native";
-import {TextInputMask} from "react-native-masked-text";
-import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import HeaderTitle from "../../components/HeaderTitle";
 import PhoneInput from "react-native-phone-number-input";
+import {connect, useDispatch} from "react-redux";
 
 
-export default function SignUpScreen({navigation}) {
+function SignUpScreen({navigation, magic}) {
     const [countryCode, setCountryCode] = React.useState("+254");
     const [number, setNumber] = React.useState("");
     const [user, setUser] = React.useState({});
-    // const inputRef = React.createRef();
+    const dispatch = useDispatch();
 
 
     // phone number input
@@ -32,24 +28,24 @@ export default function SignUpScreen({navigation}) {
     const [showMessage, setShowMessage] = useState(false);
     const phoneInput = useRef();
 
-    const magic = new Magic("pk_live_5B2A9951805695BB", {
-        network: {
-            rpcUrl: "https://alfajores-forno.celo-testnet.org",
-        },
-    });
 
     // Trigger magic link for user to login / generate wallet
     const login = async () => {
         try {
             const checkValid = phoneInput.current?.isValidNumber();
             setValid(checkValid ? checkValid : false);
-            await magic.auth.loginWithSMS({
+            let DID = await magic.auth.loginWithSMS({
                 phoneNumber: value //pass the phone input value to get otp sms
             });
+
             // Consume decentralized identity (DID)
-            magic.user.getMetadata().then(userMetadata => {
-                setUser(userMetadata)
-            });
+            if(DID !== null){
+                magic.user.getMetadata().then(userMetadata => {
+                    setUser(userMetadata)
+                    dispatch({ type: 'LOGIN', payload: {phoneNumber: value, userMetadata: userMetadata} })
+                });
+
+            }
             //TODO Navigate to Terms and Conditions Page
             navigation.navigate("ToC");
 
@@ -76,10 +72,13 @@ export default function SignUpScreen({navigation}) {
         });
       })
     }, [])*/
-    const title = "A \ncommunity \nthat you \nwill love.";
+    const title = "A community \nthat you \nwill love.";
 
     return (
-        <KeyboardAwareScrollView style={{flex: 1}}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+        >
             <LinearGradient
                 style={styles.container}
                 colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
@@ -135,14 +134,28 @@ export default function SignUpScreen({navigation}) {
                     </View>
                 </SafeAreaView>
             </LinearGradient>
-        </KeyboardAwareScrollView>
+        </KeyboardAvoidingView>
     );
 }
+const mapStateToProps = (state) => {
+    return {
+        magic: state.magic
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        dispatch: async (action) => {
+            await dispatch(action)
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        height: SIZES.height,
     },
 
     wrapper: {

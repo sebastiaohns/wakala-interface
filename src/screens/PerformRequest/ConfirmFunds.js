@@ -13,6 +13,8 @@ import Modal from "../../components/Modal";
 
 import { COLORS, SIZES } from "../../consts/theme";
 import { SHARED } from "../../assets/images";
+import ContractMethods from "../../utils/celo-integration/ContractMethods";
+import {connect} from "react-redux";
 
 const MaskedValue = (props) => {
   return (
@@ -48,7 +50,7 @@ const ModalContent = (props) => {
   );
 };
 
-const ConfirmFunds = () => {
+const ConfirmFunds = (props) => {
   const route = useRoute();
   const modalRef = React.useRef();
   const navigation = useNavigation();
@@ -58,6 +60,25 @@ const ConfirmFunds = () => {
 
   const openModal = () => {
     modalRef.current?.openModal();
+    // Todo implement all the withdrawal logic
+
+    const contractMethods = new ContractMethods(props.magic)
+    let amount = contractMethods.web3.utils.toBN(value)
+    if(operation === "TopUp"){
+      contractMethods.initializeDepositTransaction(amount).then( result => {
+        console.log(result)
+      }, error => {
+        console.log(error.toString() + " \n Amount: " + amount.toString())
+        alert(error.toString() + " \n Amount: " + amount.toString())
+      })
+    }else {
+      contractMethods.initializeWithdrawalTransaction(amount).then( result => {
+        console.log(result)
+      }, error => {
+        console.log(error.toString() + " \n Amount to withdraw: " + amount.toString())
+        alert(error.toString() + " \n Amount to withdraw: " + amount.toString())
+      })
+    }
   };
 
   const closeModal = () => {
@@ -225,5 +246,17 @@ const modalStyles = StyleSheet.create({
     marginTop: 60,
   },
 });
+const mapStateToProps = (state) => {
+  return {
+    magic: state.magic
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action)
+    }
+  }
+}
 
-export default ConfirmFunds;
+export default connect(mapStateToProps, mapDispatchToProps)(ConfirmFunds);
