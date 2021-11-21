@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SIZES } from "../consts/theme";
 import CountryInfo from "../utils/CountryInfo";
 import { Magic } from "@magic-sdk/react-native";
+import {connect, useDispatch} from "react-redux";
 
 
 const CustomDrawer = (props) => {
@@ -25,16 +26,17 @@ const CustomDrawer = (props) => {
   const [flag, setFlag] = useState("");
   const [KSH, setKSH] = useState("567.37");
   const [cUSD, setCUSD] = useState("5.67");
+  const dispatch = useDispatch();
 
   const [user, setUser] = React.useState("");
 
 
   function pickFlag() {
-    var phone_split = phone.split(" ");
-    var dial_code = phone_split[0];
+    const phone_split = phone.split(" ");
+    const dial_code = phone_split[0];
 
     CountryInfo.forEach((element) => {
-      if (element.dial_code == dial_code) {
+      if (element.dial_code === dial_code) {
         setFlag(element.flag);
       }
     });
@@ -50,8 +52,7 @@ const CustomDrawer = (props) => {
     const logout = async () => {
       await magic.user.logout();
       setUser("");
-      console.log("logged out");
-
+      dispatch({type: 'LOGOUT', payload: {}})
     };
 
   return (
@@ -106,7 +107,7 @@ const CustomDrawer = (props) => {
             <DrawerItem
               label="Sign out"
               onPress={() => logout()}
-            ></DrawerItem>
+              />
           </View>
         </DrawerContentScrollView>
 
@@ -117,6 +118,20 @@ const CustomDrawer = (props) => {
     </Fragment>
   );
 };
+
+const mapStateToProps = (state) => {
+  return {
+    //favorites: state.favorites
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action)
+    }
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);
 
 const styles = StyleSheet.create({
   container: {
@@ -190,4 +205,3 @@ const stylesBalance = StyleSheet.create({
   },
 });
 
-export default CustomDrawer;

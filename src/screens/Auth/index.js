@@ -22,7 +22,7 @@ import PhoneInput from "react-native-phone-number-input";
 export default function SignUpScreen({navigation}) {
     const [countryCode, setCountryCode] = React.useState("+254");
     const [number, setNumber] = React.useState("");
-    const [user, setUser] = React.useState("");
+    const [user, setUser] = React.useState({});
     // const inputRef = React.createRef();
 
 
@@ -47,7 +47,9 @@ export default function SignUpScreen({navigation}) {
                 phoneNumber: value //pass the phone input value to get otp sms
             });
             // Consume decentralized identity (DID)
-            magic.user.getMetadata().then(setUser);
+            magic.user.getMetadata().then(userMetadata => {
+                setUser(userMetadata)
+            });
             //TODO Navigate to Terms and Conditions Page
             navigation.navigate("ToC");
 

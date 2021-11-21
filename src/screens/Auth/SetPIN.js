@@ -24,7 +24,12 @@ function SetPIN({navigation}) {
                         end={[1, 1]}>
             <SafeAreaView style={styles.container}>
                 <View style={styles.wrapper}>
-                    <PINCode status={'choose'}/>
+                    <PINCode status={'choose'}
+                             buttonDeleteText=""
+                             subtitleChoose=""
+                             passwordLength={5}
+                             pinCodeVisible={true}
+                             finishProcess={() => navigation.navigate("ConnectPhone")} />
                 </View>
             </SafeAreaView>
         </LinearGradient>
