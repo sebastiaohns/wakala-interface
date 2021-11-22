@@ -10,7 +10,7 @@ function ScreenCmpt({ children, home }) {
       <SafeAreaView
         style={[
           styles.bottomSafeArea,
-          home == true && { backgroundColor: "#F5F5F5" },
+          home === true && { backgroundColor: "#F5F5F5" },
         ]}
       >
         <View style={styles.statusBar}>

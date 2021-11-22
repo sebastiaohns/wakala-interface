@@ -10,11 +10,12 @@ import {LinearGradient} from "expo-linear-gradient";
 import Swiper from '../../components/Swiper';
 import {SLIDER_IMAGE_001, SLIDER_IMAGE_002, SLIDER_IMAGE_003, SLIDER_IMAGE_004} from "../../assets/images";
 import appTheme, {COLORS, FONTS, SIZES} from "../../consts/theme";
+import ScreenCmpt from "../../components/ScreenCmpt";
 
 export default class OnboardingScreen extends Component {
     render() {
         return (
-            <LinearGradient style={styles.container}
+            <ScreenCmpt style={styles.container}
                             colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
                             start={[1, 0]}
                             end={[1, 1]}>
@@ -40,7 +41,7 @@ export default class OnboardingScreen extends Component {
                         <Text style={styles.text}>Want to be a community yourself? Fulfill requests and earn commissions. the faster you fulfill, the more you earn.</Text>
                     </View>
                 </Swiper>
-            </LinearGradient>
+            </ScreenCmpt>
 
         );
     }

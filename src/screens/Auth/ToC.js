@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-    SafeAreaView,
+    SafeAreaView, ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -21,7 +21,7 @@ export default function ToC({navigation}) {
                 <View style={styles.wrapper}>
                     <HeaderTitle navigation={navigation} title="Terms & Conditions"/>
                     <View style={styles.titleWrapper}>
-                        <View style={styles.contentWrapper}>
+                        <ScrollView contentContainerStyle={{alignItems: "flex-start"}} style={styles.contentWrapper}>
                             <Text style={{...FONTS.body4, lineHeight: 24}}>
                                 Lorem Ipsum is simply dummy text of the printing and typesetting
                                 industry. Lorem Ipsum has been the industry's standard dummy text
@@ -41,7 +41,7 @@ export default function ToC({navigation}) {
                                 industry. Lorem standard dummy text ever. Learn more at
                                 wakala.xyz/terms.
                             </Text>
-                        </View>
+                        </ScrollView>
                     </View>
 
                     <View style={styles.buttonWrapper}>
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: RFPercentage(8),
         marginBottom: 0,
-        alignItems: "flex-start",
+
     },
 
     title: {
@@ -90,9 +90,6 @@ const styles = StyleSheet.create({
     },
     contentWrapper: {
         marginBottom: RFPercentage(18),
-        marginTop: 10,
-        padding: 0,
-        alignItems: "flex-start",
         width: "100%",
         maxHeight: SIZES.height * 0.75,
     },
@@ -105,6 +102,7 @@ const styles = StyleSheet.create({
         ...FONTS.body2,
         fontSize: 18,
         color: COLORS.primary,
+        paddingTop: 40,
     },
     button: {
         justifyContent: "center",

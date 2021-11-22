@@ -3,6 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView} from 'react-nati
 import PINInterface from "../../components/PINInterface";
 import {LinearGradient} from "expo-linear-gradient";
 import HeaderTitle from "../../components/HeaderTitle";
+import PINCode from '@haskkor/react-native-pincode'
 
 function SetPIN({navigation}) {
     const [pin, setPin] = React.useState("")
@@ -23,9 +24,12 @@ function SetPIN({navigation}) {
                         end={[1, 1]}>
             <SafeAreaView style={styles.container}>
                 <View style={styles.wrapper}>
-                    <HeaderTitle navigation={navigation} title={title} titleStyle={{alignSelf: "center", paddingTop: 80}} />
-
-                    <PINInterface style={{width: "100%"}} callback={pinSetCallback} />
+                    <PINCode status={'choose'}
+                             buttonDeleteText=""
+                             subtitleChoose=""
+                             passwordLength={5}
+                             pinCodeVisible={true}
+                             finishProcess={() => navigation.navigate("ConnectPhone")} />
                 </View>
             </SafeAreaView>
         </LinearGradient>

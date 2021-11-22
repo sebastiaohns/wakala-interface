@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Dimensions,
   Modal,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -16,15 +14,16 @@ import CountryFlag from "react-native-country-flag";
 import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { Feather } from "@expo/vector-icons";
 import HeaderTitle from "../../components/HeaderTitle";
+import {connect, useDispatch} from "react-redux";
 
-export default function ConnectPhone({ navigation }) {
+function ConnectPhone({ navigation }) {
   const [countryCode, setCountryCode] = React.useState("+254");
   const [number, setNumber] = React.useState("");
-  const [user, setUser] = React.useState("");
+  const dispatch = useDispatch();
 
   const skipAction = () => {
     //Todo Implement the login logic
-    navigation.navigate("Drawer Nav");
+    dispatch({ type: 'FINISHED_BOARDING', payload: {} })
   };
   const connect = () => {
     //Todo Send the Celo verification messages (celo connection logic)
@@ -186,6 +185,22 @@ export default function ConnectPhone({ navigation }) {
     </LinearGradient>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    //favorites: state.favorites
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action)
+    }
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ConnectPhone);
+//export default ConnectPhone;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

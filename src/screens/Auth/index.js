@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -9,20 +11,16 @@ import {
   View,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import CountryFlag from "react-native-country-flag";
 import { COLORS, FONTS, SIZES } from "../../consts/theme";
-import { Feather } from "@expo/vector-icons";
-import { Magic } from "@magic-sdk/react-native";
-import { TextInputMask } from "react-native-masked-text";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HeaderTitle from "../../components/HeaderTitle";
 import PhoneInput from "react-native-phone-number-input";
+import { connect, useDispatch } from "react-redux";
 
-export default function SignUpScreen({ navigation }) {
+function SignUpScreen({ navigation, magic }) {
   const [countryCode, setCountryCode] = React.useState("+254");
   const [number, setNumber] = React.useState("");
-  const [user, setUser] = React.useState("");
-  // const inputRef = React.createRef();
+  const [user, setUser] = React.useState({});
+  const dispatch = useDispatch();
 
   // phone number input
   const [value, setValue] = useState("");
@@ -30,22 +28,25 @@ export default function SignUpScreen({ navigation }) {
   const [showMessage, setShowMessage] = useState(false);
   const phoneInput = useRef();
 
-  const magic = new Magic("pk_live_5B2A9951805695BB", {
-    network: {
-      rpcUrl: "https://alfajores-forno.celo-testnet.org",
-    },
-  });
-
   // Trigger magic link for user to login / generate wallet
   const login = async () => {
     try {
       const checkValid = phoneInput.current?.isValidNumber();
       setValid(checkValid ? checkValid : false);
-      await magic.auth.loginWithSMS({
+      let DID = await magic.auth.loginWithSMS({
         phoneNumber: value, //pass the phone input value to get otp sms
       });
+
       // Consume decentralized identity (DID)
-      magic.user.getMetadata().then(setUser);
+      if (DID !== null) {
+        magic.user.getMetadata().then((userMetadata) => {
+          setUser(userMetadata);
+          dispatch({
+            type: "LOGIN",
+            payload: { phoneNumber: value, userMetadata: userMetadata },
+          });
+        });
+      }
       //TODO Navigate to Terms and Conditions Page
       navigation.navigate("ToC");
     } catch (err) {
@@ -62,19 +63,22 @@ export default function SignUpScreen({ navigation }) {
 
   // If user is logged in, fetch user wallet balance and the `message` variable value from the smart contract
   /*useEffect(() => {
-    magic.user.isLoggedIn().then(isLoggedIn => {
-      if (!isLoggedIn) return setUser('');
-      magic.user.getMetadata().then(user => {
-        setUser(user);
-        fetchBalance(user.publicAddress);
-        fetchContractMessage();
-      });
-    })
-  }, [])*/
-  const title = "A \ncommunity \nthat you \nwill love.";
+      magic.user.isLoggedIn().then(isLoggedIn => {
+        if (!isLoggedIn) return setUser('');
+        magic.user.getMetadata().then(user => {
+          setUser(user);
+          fetchBalance(user.publicAddress);
+          fetchContractMessage();
+        });
+      })
+    }, [])*/
+  const title = "A community \nthat you \nwill love.";
 
   return (
-    <KeyboardAwareScrollView style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <LinearGradient
         style={styles.container}
         colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
@@ -109,107 +113,6 @@ export default function SignUpScreen({ navigation }) {
                   withShadow
                   autoFocus
                 />
-
-                {/* <View
-                  style={[
-                    styles.numberInputBlock,
-                    {
-                      borderRadius: 10,
-                      borderBottomRightRadius: 0,
-                      borderBottomLeftRadius: 0,
-                    },
-                  ]}
-                > */}
-                {/* <View
-                    style={[
-                      styles.countryInput,
-                      {
-                        borderTopLeftRadius: 10,
-                        justifyContent: "center",
-                      },
-                    ]}
-                  >
-                    <CountryFlag isoCode="ke" size={21} />
-                  </View> */}
-                {/* <View style={styles.border} /> */}
-                {/* <View
-                    style={[
-                      styles.numberInput,
-                      {
-                        justifyContent: "space-between",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        borderRadius: 10,
-                      },
-                    ]}
-                    placeholder="Type your phone number here!"
-                  >
-                    <TextInput
-                      style={styles.countryInput}
-                      placeholder="+254"
-                      onChangeText={(text) => setCountryCode(text)}
-                      defaultValue={countryCode}
-                    />
-                    <View style={styles.border} />
-                    <TextInputMask
-                      type={"custom"}
-                      value={number}
-                      options={{
-                        maskType: "BRL",
-                        withDDD: true,
-                        mask: "999 999 999 999",
-                      }}
-                      onChangeText={(formatted, extracted) => {
-                        setNumber(formatted);
-                      }}
-                      keyboardType={"phone-pad"}
-                      ref={inputRef}
-                      style={styles.numberInput}
-                      placeholder="Type here your phone number!"
-                      placeholderTextColor={COLORS.black}
-                    />
-                  </View> */}
-                {/* </View> */}
-                {/* <View
-                  style={[
-                    styles.border,
-                    {
-                      width: SIZES.width * 0.75,
-                      height: 1,
-                    },
-                  ]}
-                /> */}
-                {/* <View
-                  style={[
-                    styles.numberInputBlock,
-                    { borderBottomRightRadius: 10, borderBottomLeftRadius: 10 },
-                  ]}
-                >
-                  <TextInput
-                    style={styles.countryInput}
-                    placeholder="+254"
-                    onChangeText={(text) => setCountryCode(text)}
-                    defaultValue={countryCode}
-                  />
-                  <View style={styles.border} />
-                  <TextInputMask
-                    type={"custom"}
-                    value={number}
-                    options={{
-                      maskType: "BRL",
-                      withDDD: true,
-                      mask: "(999) 999 999",
-                    }}
-                    onChangeText={(formatted, extracted) => {
-                      setNumber(formatted);
-                    }}
-                    keyboardType={"phone-pad"}
-                    ref={inputRef}
-                    style={styles.numberInput}
-                    placeholder="Type here your phone number!"
-                    placeholderTextColor={COLORS.black}
-                  />
-                </View> */}
               </View>
             </View>
 
@@ -229,14 +132,28 @@ export default function SignUpScreen({ navigation }) {
           </View>
         </SafeAreaView>
       </LinearGradient>
-    </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    magic: state.magic,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    height: SIZES.height,
   },
 
   wrapper: {
