@@ -3,7 +3,7 @@ import {
     StyleSheet,   // CSS-like styles
     Text,         // Renders text
     View,          // Container component
-    Image
+    Image, TouchableOpacity
 } from 'react-native';
 import {LinearGradient} from "expo-linear-gradient";
 

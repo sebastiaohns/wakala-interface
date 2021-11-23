@@ -100,7 +100,10 @@ const ConfirmFunds = (props) => {
     // }
     // openModal();
 
+    openModal();
+
     const contractMethods = new ContractMethods(props.magic);
+    await contractMethods.init()
     let amount = contractMethods.web3.utils.toBN(value);
 
     if (operation === "TopUp") {
@@ -128,8 +131,6 @@ const ConfirmFunds = (props) => {
         }
       );
     }
-
-    openModal();
   };
 
   const openModal = () => {
