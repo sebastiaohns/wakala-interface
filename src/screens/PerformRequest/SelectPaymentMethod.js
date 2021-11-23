@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -48,10 +48,10 @@ const BannerContent = (props) => {
 
 const SelectCurrency = () => {
   const route = useRoute();
-  const bannerRef = React.useRef();
+  const bannerRef = useRef();
   const navigation = useNavigation();
 
-  const [operation] = useState(route.params.operation);
+  const operation = route.params.operation;
 
   return (
     <Fragment>

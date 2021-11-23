@@ -1,17 +1,15 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { TextInputMask } from "react-native-masked-text";
 
 import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
-import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
 import { COLORS, SIZES } from "../../consts/theme";
-import { BORED } from "../../assets/images";
+import { ERROR, BORED } from "../../assets/images";
 
 const CardElement = (props) => {
   return (
@@ -43,32 +41,45 @@ const CardElement = (props) => {
 const ModalContent = (props) => {
   return (
     <View style={modalStyles.container}>
-      {props.type === "deposit" ? (
-        <View>
-          <Ionicons
-            name="checkmark-circle"
-            size={36}
-            color="#4840BB"
-            style={{ textAlign: "center", marginBottom: 12 }}
-          />
-          <Text style={[styles.title, { color: "#4840BB" }]}>
-            Transaction Successful!
-          </Text>
-          <TouchableOpacity onPress={() => props.handleAction()}>
-            <Text style={modalStyles.button}>Okay!</Text>
-          </TouchableOpacity>
-        </View>
+      {props.isActionSuccess ? (
+        props.type === "deposit" ? (
+          <View>
+            <Ionicons
+              name="checkmark-circle"
+              size={36}
+              color="#4840BB"
+              style={{ textAlign: "center", marginBottom: 12 }}
+            />
+            <Text style={[styles.title, { color: "#4840BB" }]}>
+              Transaction Successful!
+            </Text>
+            <TouchableOpacity onPress={() => props.handleAction()}>
+              <Text style={modalStyles.button}>Okay!</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
+            <Image source={BORED} style={modalStyles.image} />
+            <Text style={modalStyles.title}>Thank you!</Text>
+            <Text style={modalStyles.text}>
+              After your agents confirms of M-PESA payment receipt. Your cUSD
+              will be deposited to your wallet.
+            </Text>
+
+            <TouchableOpacity onPress={() => props.handleAction()}>
+              <Text style={modalStyles.button}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        )
       ) : (
         <View>
-          <Image source={BORED} style={modalStyles.image} />
-          <Text style={modalStyles.title}>Thank you!</Text>
+          <Image source={ERROR} style={modalStyles.errorImage} />
+          <Text style={modalStyles.title}>Oh Snap!</Text>
           <Text style={modalStyles.text}>
-            After your agents confirms of M-PESA payment receipt. Your cUSD will
-            be deposited to your wallet.
+            Something just happened. Please try again.
           </Text>
-
           <TouchableOpacity onPress={() => props.handleAction()}>
-            <Text style={modalStyles.button}>Got it!</Text>
+            <Text style={modalStyles.button}>Try again</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -78,18 +89,52 @@ const ModalContent = (props) => {
 
 const ConfirmPayment = () => {
   const route = useRoute();
-  const modalRef = React.useRef();
+  const modalRef = useRef();
   const navigation = useNavigation();
 
-  const [type] = useState(route.params.type);
-  const [value] = useState(route.params.value);
+  const type = route.params.type;
+  const value = route.params.value;
+
+  const [isActionSuccess, setIsActionSuccess] = useState(true);
+
+  const handleAction = async () => {
+    // Call function to perform the addressed action
+    // If response is success the set isOperationSuccess
+    // to true and open modal
+    // if (type === "deposit") {
+    //   performDepositAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // } else {
+    //   performWithdrawAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // }
+    openModal();
+  };
 
   const openModal = () => {
     modalRef.current?.openModal();
   };
 
   const closeModal = () => {
+    if (!isActionSuccess) {
+      modalRef.current?.closeModal();
+      return;
+    }
+
     modalRef.current?.closeModal();
+
     if (type === "deposit") {
       navigation.navigate("Rate", { operation: type });
     } else {
@@ -100,7 +145,6 @@ const ConfirmPayment = () => {
   return (
     <Fragment>
       <ScreenCmpt>
-        <NavHeader />
         <View style={styles.container}>
           <View>
             <View style={styles.titleContainer}>
@@ -136,7 +180,7 @@ const ConfirmPayment = () => {
           {type === "withdraw" && <CardElement value={value} />}
 
           <View>
-            <SwipeButton handleAction={openModal} />
+            <SwipeButton handleAction={handleAction} />
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.goBack()}
@@ -151,8 +195,20 @@ const ConfirmPayment = () => {
 
       <Modal
         ref={modalRef}
-        style={type === "deposit" ? { height: 300 } : { height: 420 }}
-        content={<ModalContent handleAction={closeModal} type={type} />}
+        style={
+          !isActionSuccess
+            ? { height: 490 }
+            : type === "deposit"
+            ? { height: 300 }
+            : { height: 420 }
+        }
+        content={
+          <ModalContent
+            handleAction={closeModal}
+            type={type}
+            isActionSuccess={isActionSuccess}
+          />
+        }
       />
     </Fragment>
   );
@@ -161,8 +217,7 @@ const ConfirmPayment = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 20,
-    marginHorizontal: 30,
+    margin: 30,
     justifyContent: "space-between",
     alignItems: "center",
   },
@@ -264,6 +319,13 @@ const modalStyles = StyleSheet.create({
 
   image: {
     height: 70,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  errorImage: {
+    height: 180,
     maxWidth: SIZES.width * 0.8,
     resizeMode: "contain",
     marginBottom: 20,

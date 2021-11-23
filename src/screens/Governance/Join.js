@@ -1,5 +1,12 @@
 import React from "react";
-import { Image, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -10,6 +17,22 @@ import { SIZES } from "../../consts/theme";
 
 const Join = () => {
   const navigation = useNavigation();
+  const url = "https://governance.wakala.xyz/";
+
+  const openLink = () => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        alert(
+          "This device is not able to open the link \nPlease visit the following website\n" +
+            url
+        );
+      }
+    });
+
+    navigation.navigate("Home Screen");
+  };
 
   return (
     <ScreenCmpt>
@@ -20,7 +43,7 @@ const Join = () => {
           <Text style={styles.subtitle}>
             Join the governing process, make proposals, vote on proposal
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Home Screen")}>
+          <TouchableOpacity onPress={openLink}>
             <LinearGradient
               colors={["rgba(183, 0, 76, 0.3)", "rgba(19, 63, 219, 1)"]}
               start={[1, 0]}

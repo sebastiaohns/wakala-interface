@@ -1,19 +1,15 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { TextInputMask } from "react-native-masked-text";
 
 import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
-import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
 import { COLORS, SIZES } from "../../consts/theme";
-import { BORED } from "../../assets/images";
-
-// import CeloController from "../../utils/celo-integration/Controller";
+import { ERROR, BORED } from "../../assets/images";
 
 const CardElement = (props) => {
   return (
@@ -45,32 +41,45 @@ const CardElement = (props) => {
 const ModalContent = (props) => {
   return (
     <View style={modalStyles.container}>
-      {props.operation === "TopUp" ? (
-        <View>
-          <Image source={BORED} style={modalStyles.image} />
-          <Text style={modalStyles.title}>Thank you!</Text>
-          <Text style={modalStyles.text}>
-            After your agents confirms of M-PESA payment receipt. Your cUSD will
-            be deposited to your wallet.
-          </Text>
+      {props.isActionSuccess ? (
+        props.operation === "TopUp" ? (
+          <View>
+            <Image source={BORED} style={modalStyles.image} />
+            <Text style={modalStyles.title}>Thank you!</Text>
+            <Text style={modalStyles.text}>
+              After your agents confirms of M-PESA payment receipt. Your cUSD
+              will be deposited to your wallet.
+            </Text>
 
-          <TouchableOpacity onPress={() => props.handleAction()}>
-            <Text style={modalStyles.button}>Got it!</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity onPress={() => props.handleAction()}>
+              <Text style={modalStyles.button}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
+            <Ionicons
+              name="checkmark-circle"
+              size={36}
+              color="#4840BB"
+              style={{ textAlign: "center", marginBottom: 12 }}
+            />
+            <Text style={[styles.title, { color: "#4840BB" }]}>
+              Transaction Successful!
+            </Text>
+            <TouchableOpacity onPress={() => props.handleAction()}>
+              <Text style={modalStyles.button}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        )
       ) : (
         <View>
-          <Ionicons
-            name="checkmark-circle"
-            size={36}
-            color="#4840BB"
-            style={{ textAlign: "center", marginBottom: 12 }}
-          />
-          <Text style={[styles.title, { color: "#4840BB" }]}>
-            Transaction Successful!
+          <Image source={ERROR} style={modalStyles.errorImage} />
+          <Text style={modalStyles.title}>Oh Snap!</Text>
+          <Text style={modalStyles.text}>
+            Something just happened. Please try again.
           </Text>
           <TouchableOpacity onPress={() => props.handleAction()}>
-            <Text style={modalStyles.button}>Got it!</Text>
+            <Text style={modalStyles.button}>Try again</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -80,23 +89,52 @@ const ModalContent = (props) => {
 
 const ConfirmRequest = () => {
   const route = useRoute();
-  const modalRef = React.useRef();
+  const modalRef = useRef();
   const navigation = useNavigation();
 
   const value = route.params.value;
   const operation = route.params.operation;
 
-  // const callRequest = () => {
-  //   const celoController = new CeloController();
-  //   celoController.onConfirmDeposit(value);
-  // };
+  const [isActionSuccess, setIsActionSuccess] = useState(true);
+
+  const handleAction = async () => {
+    // Call function to perform the addressed action
+    // If response is success the set isOperationSuccess
+    // to true and open modal
+    // if (operation === "TopUp") {
+    //   performTopUpAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // } else {
+    //   performWithdrawAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // }
+    openModal();
+  };
 
   const openModal = () => {
     modalRef.current?.openModal();
   };
 
   const closeModal = () => {
+    if (!isActionSuccess) {
+      modalRef.current?.closeModal();
+      return;
+    }
+
     modalRef.current?.closeModal();
+
     if (operation === "TopUp") {
       navigation.navigate("Success", {
         operation: operation,
@@ -111,7 +149,6 @@ const ConfirmRequest = () => {
   return (
     <Fragment>
       <ScreenCmpt>
-        <NavHeader />
         <View style={styles.container}>
           <View>
             <View style={styles.titleContainer}>
@@ -147,8 +184,7 @@ const ConfirmRequest = () => {
 
           {operation === "TopUp" && <CardElement value={value} />}
           <View>
-            <SwipeButton handleAction={openModal} />
-            {/* <SwipeButton handleAction={callRequest} /> */}
+            <SwipeButton handleAction={handleAction} />
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.goBack()}
@@ -163,9 +199,19 @@ const ConfirmRequest = () => {
 
       <Modal
         ref={modalRef}
-        style={operation === "TopUp" ? { height: 420 } : { height: 300 }}
+        style={
+          !isActionSuccess
+            ? { height: 490 }
+            : operation === "TopUp"
+            ? { height: 420 }
+            : { height: 300 }
+        }
         content={
-          <ModalContent handleAction={closeModal} operation={operation} />
+          <ModalContent
+            handleAction={closeModal}
+            operation={operation}
+            isActionSuccess={isActionSuccess}
+          />
         }
       />
     </Fragment>
@@ -175,8 +221,7 @@ const ConfirmRequest = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 20,
-    marginHorizontal: 30,
+    margin: 30,
     justifyContent: "space-between",
     alignItems: "center",
   },
@@ -278,6 +323,13 @@ const modalStyles = StyleSheet.create({
 
   image: {
     height: 70,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  errorImage: {
+    height: 180,
     maxWidth: SIZES.width * 0.8,
     resizeMode: "contain",
     marginBottom: 20,
