@@ -16,12 +16,16 @@ function NavHeader(props) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Feather name="chevron-left" size={32} color="#4840BB" />
-      </TouchableOpacity>
+      {!props.hideBackButton ? (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.goBack()}
+        >
+          <Feather name="chevron-left" size={32} color="#4840BB" />
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.dummyView} />
+      )}
 
       {props.showTitle && <Text style={styles.title}>{title}</Text>}
 

@@ -1,20 +1,19 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { Image, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { connect } from "react-redux";
 
+import ContractMethods from "../../utils/celo-integration/ContractMethods";
 import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
 import { COLORS, SIZES } from "../../consts/theme";
-import { SHARED } from "../../assets/images";
-import ContractMethods from "../../utils/celo-integration/ContractMethods";
-import {connect} from "react-redux";
+import { ERROR, SHARED } from "../../assets/images";
 
 const MaskedValue = (props) => {
   return (
@@ -34,55 +33,117 @@ const MaskedValue = (props) => {
 const ModalContent = (props) => {
   return (
     <View style={modalStyles.container}>
-      <Image source={SHARED} style={modalStyles.image} />
-      <Text style={modalStyles.title}>Request Shared</Text>
-      <Text style={modalStyles.text}>
-        We shared your {props.operation === "TopUp" ? "deposit" : "withdraw"}{" "}
-        request with the agent community. We will notify you once an agent has
-        answered your request. It can take up to 4 minutes. Click OK to exit
-        this page.
-      </Text>
+      {props.isActionSuccess ? (
+        <View>
+          <Image source={SHARED} style={modalStyles.image} />
+          <Text style={modalStyles.title}>Request Shared</Text>
+          <Text style={modalStyles.text}>
+            We shared your{" "}
+            {props.operation === "TopUp" ? "deposit" : "withdraw"} request with
+            the agent community. We will notify you once an agent has answered
+            your request. It can take up to 4 minutes. Click OK to exit this
+            page.
+          </Text>
 
-      <TouchableOpacity onPress={props.handleAction}>
-        <Text style={modalStyles.button}>Okay</Text>
-      </TouchableOpacity>
+          <TouchableOpacity onPress={props.handleAction}>
+            <Text style={modalStyles.button}>Okay</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View>
+          <Image source={ERROR} style={modalStyles.errorImage} />
+          <Text style={modalStyles.title}>Oh Snap!</Text>
+          <Text style={modalStyles.text}>
+            Something just happened. Please try again.
+          </Text>
+          <TouchableOpacity onPress={() => props.handleAction()}>
+            <Text style={modalStyles.button}>Try again</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
 
 const ConfirmFunds = (props) => {
   const route = useRoute();
-  const modalRef = React.useRef();
+  const modalRef = useRef();
   const navigation = useNavigation();
 
   const value = route.params.value;
   const operation = route.params.operation;
 
+  const [isActionSuccess, setIsActionSuccess] = useState(true);
+
+  const handleAction = async () => {
+    // Call function to perform the addressed action
+    // If response is success the set isOperationSuccess
+    // to true and open modal
+    // if (operation === "TopUp") {
+    //   performTopUpAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // } else {
+    //   performWithdrawAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // }
+    // openModal();
+
+    const contractMethods = new ContractMethods(props.magic);
+    let amount = contractMethods.web3.utils.toBN(value);
+
+    if (operation === "TopUp") {
+      contractMethods.initializeDepositTransaction(amount).then(
+        (result) => {
+          console.log(result);
+        },
+        (error) => {
+          console.log(error.toString() + " \n Amount: " + amount.toString());
+          alert(error.toString() + " \n Amount: " + amount.toString());
+        }
+      );
+    } else {
+      contractMethods.initializeWithdrawalTransaction(amount).then(
+        (result) => {
+          console.log(result);
+        },
+        (error) => {
+          console.log(
+            error.toString() + " \n Amount to withdraw: " + amount.toString()
+          );
+          alert(
+            error.toString() + " \n Amount to withdraw: " + amount.toString()
+          );
+        }
+      );
+    }
+
+    openModal();
+  };
+
   const openModal = () => {
     modalRef.current?.openModal();
-    // Todo implement all the withdrawal logic
-
-    const contractMethods = new ContractMethods(props.magic)
-    let amount = contractMethods.web3.utils.toBN(value)
-    if(operation === "TopUp"){
-      contractMethods.initializeDepositTransaction(amount).then( result => {
-        console.log(result)
-      }, error => {
-        console.log(error.toString() + " \n Amount: " + amount.toString())
-        alert(error.toString() + " \n Amount: " + amount.toString())
-      })
-    }else {
-      contractMethods.initializeWithdrawalTransaction(amount).then( result => {
-        console.log(result)
-      }, error => {
-        console.log(error.toString() + " \n Amount to withdraw: " + amount.toString())
-        alert(error.toString() + " \n Amount to withdraw: " + amount.toString())
-      })
-    }
   };
 
   const closeModal = () => {
+    if (!isActionSuccess) {
+      modalRef.current?.closeModal();
+      return;
+    }
+
     modalRef.current?.closeModal();
+
     navigation.navigate("Confirm Request", {
       value: value,
       operation: operation,
@@ -112,7 +173,9 @@ const ConfirmFunds = (props) => {
 
             <View style={{ flex: 1, flexDirection: "row" }}>
               <View style={styles.descriptionContainer}>
-                <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+                <View
+                  style={{ flexDirection: "row", alignItems: "flex-start" }}
+                >
                   <Text style={styles.feesText}>Estimated Fees </Text>
                   <Feather name="info" size={11} color="#222222" />
                 </View>
@@ -130,15 +193,19 @@ const ConfirmFunds = (props) => {
             </View>
           </LinearGradient>
           <View style={{ marginBottom: 100 }}>
-            <SwipeButton handleAction={openModal} />
+            <SwipeButton handleAction={handleAction} />
           </View>
         </View>
       </ScreenCmpt>
       <Modal
         ref={modalRef}
-        style={{ height: 530 }}
+        style={isActionSuccess ? { height: 510 } : { height: 490 }}
         content={
-          <ModalContent operation={operation} handleAction={closeModal} />
+          <ModalContent
+            handleAction={closeModal}
+            operation={operation}
+            isActionSuccess={isActionSuccess}
+          />
         }
       />
     </Fragment>
@@ -185,7 +252,12 @@ const styles = StyleSheet.create({
     flex: 6,
   },
 
+  AmountContainer: {
+    flex: 4,
+  },
+
   feesText: {
+    height: 15,
     fontSize: 11,
     lineHeight: 13,
     color: "#222222",
@@ -193,11 +265,8 @@ const styles = StyleSheet.create({
     fontFamily: "Rubik_400Regular",
   },
 
-  AmountContainer: {
-    flex: 4,
-  },
-
   receivesText: {
+    height: 18,
     fontSize: 14,
     lineHeight: 17,
     color: "#222222",
@@ -215,6 +284,13 @@ const modalStyles = StyleSheet.create({
 
   image: {
     height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  errorImage: {
+    height: 180,
     maxWidth: SIZES.width * 0.8,
     resizeMode: "contain",
     marginBottom: 20,
@@ -248,15 +324,15 @@ const modalStyles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
-    magic: state.magic
-  }
-}
-const mapDispatchToProps = dispatch => {
+    magic: state.magic,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
   return {
     dispatch: async (action) => {
-      await dispatch(action)
-    }
-  }
-}
+      await dispatch(action);
+    },
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConfirmFunds);

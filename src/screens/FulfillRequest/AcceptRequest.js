@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useRef } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,7 +11,7 @@ import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
 import { COLORS, SIZES } from "../../consts/theme";
-import { SHARED } from "../../assets/images";
+import { ERROR, SHARED } from "../../assets/images";
 
 const MaskedValue = (props) => {
   return (
@@ -32,17 +31,32 @@ const MaskedValue = (props) => {
 const ModalContent = (props) => {
   return (
     <View style={modalStyles.container}>
-      <Image source={SHARED} style={modalStyles.image} />
-      <Text style={modalStyles.title}>Money sent</Text>
-      <Text style={modalStyles.text}>
-        Ksh {props.value} has been sent to the Wakala escrow account. We shared
-        your M-PESA number with the requesting member. We will notify you once
-        the requesting member confirms the payment.
-      </Text>
+      {props.isActionSuccess ? (
+        <View>
+          <Image source={SHARED} style={modalStyles.image} />
+          <Text style={modalStyles.title}>Money sent</Text>
+          <Text style={modalStyles.text}>
+            Ksh {props.value} has been sent to the Wakala escrow account. We
+            shared your M-PESA number with the requesting member. We will notify
+            you once the requesting member confirms the payment.
+          </Text>
 
-      <TouchableOpacity onPress={props.handleAction}>
-        <Text style={modalStyles.button}>Okay</Text>
-      </TouchableOpacity>
+          <TouchableOpacity onPress={props.handleAction}>
+            <Text style={modalStyles.button}>Okay</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View>
+          <Image source={ERROR} style={modalStyles.errorImage} />
+          <Text style={modalStyles.title}>Oh Snap!</Text>
+          <Text style={modalStyles.text}>
+            Something just happened. Please try again.
+          </Text>
+          <TouchableOpacity onPress={() => props.handleAction()}>
+            <Text style={modalStyles.button}>Try again</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -52,10 +66,43 @@ const AcceptRequest = () => {
   const modalRef = useRef();
   const navigation = useNavigation();
 
-  const [type] = useState(route.params.type);
-  const [value] = useState(route.params.value);
+  const type = route.params.type;
+  const value = route.params.value;
+
+  const [isActionSuccess, setIsActionSuccess] = useState(true);
+
+  const handleAction = async () => {
+    // Call function to perform the addressed action
+    // If response is success the set isOperationSuccess
+    // to true and open modal
+    // if (type === "deposit") {
+    //   performDepositAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // } else {
+    //   performWithdrawAction().then(
+    //     (response) => {
+    //       setIsActionSuccess(true);
+    //     },
+    //     (error) => {
+    //       setIsActionSuccess(false);
+    //     }
+    //   );
+    // }
+    openModal();
+  };
 
   const openModal = () => {
+    if (!isActionSuccess) {
+      modalRef.current?.openModal();
+      return;
+    }
+
     if (type === "deposit") {
       modalRef.current?.openModal();
     } else {
@@ -67,7 +114,13 @@ const AcceptRequest = () => {
   };
 
   const closeModal = () => {
+    if (!isActionSuccess) {
+      modalRef.current?.closeModal();
+      return;
+    }
+
     modalRef.current?.closeModal();
+
     navigation.navigate("Confirm Payment", {
       value: value,
       type: type,
@@ -128,16 +181,21 @@ const AcceptRequest = () => {
             )}
 
             <View>
-              <SwipeButton handleAction={openModal} />
+              <SwipeButton handleAction={handleAction} />
             </View>
           </View>
         </View>
       </ScreenCmpt>
       <Modal
         ref={modalRef}
-        style={{ height: 530 }}
+        style={isActionSuccess ? { height: 510 } : { height: 490 }}
         content={
-          <ModalContent type={type} value={value} handleAction={closeModal} />
+          <ModalContent
+            type={type}
+            value={value}
+            handleAction={closeModal}
+            isActionSuccess={isActionSuccess}
+          />
         }
       />
     </Fragment>
@@ -193,6 +251,7 @@ const styles = StyleSheet.create({
   },
 
   feesText: {
+    height: 15,
     fontSize: 11,
     lineHeight: 13,
     color: "#222222",
@@ -205,6 +264,7 @@ const styles = StyleSheet.create({
   },
 
   receivesText: {
+    height: 18,
     fontSize: 14,
     lineHeight: 17,
     color: "#222222",
@@ -230,6 +290,13 @@ const modalStyles = StyleSheet.create({
 
   image: {
     height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  errorImage: {
+    height: 180,
     maxWidth: SIZES.width * 0.8,
     resizeMode: "contain",
     marginBottom: 20,

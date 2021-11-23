@@ -21,7 +21,7 @@ const CardInfo = () => {
   const navigation = useNavigation();
   const [index, setIndex] = useState(0);
 
-  const image = [GOVERNANCE, PROPOSALS, TOKENS, VOTING];
+  const image = [GOVERNANCE, PROPOSALS, VOTING, TOKENS];
   const titleText = [
     "Wakala DAO Governance",
     "Proposals",

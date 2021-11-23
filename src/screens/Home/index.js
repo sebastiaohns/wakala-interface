@@ -1,32 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import {
   Image,
   View,
   Text,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   LayoutAnimation,
   FlatList,
 } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
+import Banner from "../../components/Banner";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import RequestCard from "../../components/RequestCard";
 
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import rawData from "../../utils/DepositRequestData";
-import { HOME_EMPTY } from "../../assets/images";
+import { MODEL, HOME_EMPTY } from "../../assets/images";
 
-const NavMenu = () => {
+const NavMenu = (props) => {
   const navigation = useNavigation();
 
   return (
     <View style={navStyles.nav}>
-      <TouchableOpacity style={navStyles.buttonShadow}>
+      <TouchableOpacity
+        style={navStyles.buttonShadow}
+        onPress={props.openModal}
+      >
         <LinearGradient
           colors={[
             "#133FDB",
@@ -54,20 +56,32 @@ const NavMenu = () => {
           <Text style={navStyles.buttonText}>Add/Withdraw</Text>
         </LinearGradient>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <View style={navStyles.qrButton}>
-          <MaterialCommunityIcons
-            name="qrcode-scan"
-            size={24}
-            color={COLORS.primary}
-          />
-        </View>
+    </View>
+  );
+};
+
+const BannerContent = (props) => {
+  return (
+    <View style={bannerStyles.container}>
+      <Image source={MODEL} style={bannerStyles.image} />
+      <Text style={bannerStyles.title}>Coming soon</Text>
+      <Text style={bannerStyles.text}>
+        Stay put, we are soon adding cash option.
+      </Text>
+
+      <TouchableOpacity
+        style={bannerStyles.buttonContainer}
+        onPress={() => props.bannerRef.current?.closeBanner()}
+      >
+        <Text style={bannerStyles.button}>Dismiss</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const HomeScreen = ({ navigation }) => {
+  const bannerRef = useRef();
+
   const [isEmpty, setIsEmpty] = useState(true);
   const [depositRequestData, setDepositRequestData] = useState([]);
 
@@ -94,47 +108,54 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <ScreenCmpt home={true}>
-      <View style={styles.menu}>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="list-outline" size={38} color={COLORS.primary} />
-        </TouchableOpacity>
-      </View>
+    <Fragment>
+      <ScreenCmpt home={true}>
+        <View style={styles.menu}>
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+            <Ionicons name="list-outline" size={38} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
 
-      {isEmpty ? (
-        <View style={styles.wrapper}>
-          <Image source={HOME_EMPTY} style={styles.image} />
-          <Text style={styles.text}>
-            All requests have been fullfilled. Take a break, get some air, check
-            back in later
-          </Text>
-        </View>
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <FlatList
-            data={depositRequestData}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <RequestCard
-                _id={item._id}
-                amount={item.amount}
-                stars={item.stars}
-                rating={item.rating}
-                type={item.type}
-                deleteItem={removeDepositRequestItem}
-              />
-            )}
-          />
-        </View>
-      )}
-      <NavMenu />
-    </ScreenCmpt>
+        {isEmpty ? (
+          <View style={styles.wrapper}>
+            <Image source={HOME_EMPTY} style={styles.image} />
+            <Text style={styles.text}>
+              All requests have been fullfilled. Take a break, get some air,
+              check back in later
+            </Text>
+          </View>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <FlatList
+              data={depositRequestData}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <RequestCard
+                  _id={item._id}
+                  amount={item.amount}
+                  stars={item.stars}
+                  rating={item.rating}
+                  type={item.type}
+                  deleteItem={removeDepositRequestItem}
+                />
+              )}
+            />
+          </View>
+        )}
+        <NavMenu openModal={() => bannerRef.current?.openBanner()} />
+      </ScreenCmpt>
+      <Banner
+        ref={bannerRef}
+        style={{ height: 350 }}
+        content={<BannerContent bannerRef={bannerRef} />}
+      />
+    </Fragment>
   );
 };
 
@@ -195,9 +216,9 @@ const navStyles = StyleSheet.create({
 
   button: {
     justifyContent: "center",
-    borderRadius: (SIZES.width * 0.12) / 2,
-    height: SIZES.width * 0.12,
-    minWidth: SIZES.width * 0.35,
+    borderRadius: (SIZES.width * 0.14) / 2,
+    height: SIZES.width * 0.14,
+    minWidth: SIZES.width * 0.41,
   },
 
   buttonShadow: {
@@ -218,6 +239,52 @@ const navStyles = StyleSheet.create({
     fontFamily: "Rubik_500Medium",
     textAlign: "center",
     color: "#FFF",
+  },
+});
+
+const bannerStyles = StyleSheet.create({
+  container: {
+    height: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  image: {
+    height: 150,
+    maxWidth: SIZES.width * 0.8,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 18,
+    lineHeight: 22,
+    color: "#2C2948",
+    textAlign: "center",
+    fontFamily: "Rubik_500Medium",
+  },
+
+  text: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: "#1C1939",
+    textAlign: "center",
+    fontFamily: "Rubik_400Regular",
+  },
+
+  buttonContainer: {
+    height: 50,
+    width: 100,
+    justifyContent: "center",
+  },
+
+  button: {
+    fontSize: 14,
+    lineHeight: 23,
+    color: "#4840BB",
+    textAlign: "center",
+    fontFamily: "Rubik_700Bold",
   },
 });
 
