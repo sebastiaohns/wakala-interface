@@ -1,5 +1,12 @@
 import React, { Fragment, useRef, useState } from "react";
-import { Image, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Image,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,7 +19,7 @@ import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
-import { COLORS, SIZES } from "../../consts/theme";
+import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { ERROR, SHARED } from "../../assets/images";
 
 const MaskedValue = (props) => {
@@ -56,6 +63,9 @@ const ModalContent = (props) => {
           <Text style={modalStyles.text}>
             Something just happened. Please try again.
           </Text>
+          <Text style={{ ...FONTS.body5, textAlign: "center", marginTop: 5 }}>
+            {props.errorMessage}
+          </Text>
           <TouchableOpacity onPress={() => props.handleAction()}>
             <Text style={modalStyles.button}>Try again</Text>
           </TouchableOpacity>
@@ -74,62 +84,48 @@ const ConfirmFunds = (props) => {
   const operation = route.params.operation;
 
   const [isActionSuccess, setIsActionSuccess] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const handleAction = async () => {
-    // Call function to perform the addressed action
-    // If response is success the set isOperationSuccess
-    // to true and open modal
-    // if (operation === "TopUp") {
-    //   performTopUpAction().then(
-    //     (response) => {
-    //       setIsActionSuccess(true);
-    //     },
-    //     (error) => {
-    //       setIsActionSuccess(false);
-    //     }
-    //   );
-    // } else {
-    //   performWithdrawAction().then(
-    //     (response) => {
-    //       setIsActionSuccess(true);
-    //     },
-    //     (error) => {
-    //       setIsActionSuccess(false);
-    //     }
-    //   );
-    // }
-    // openModal();
-
+    openModal();
+    //Init
+    setIsLoading(true);
+    setLoadingMessage("Initializing the transaction...");
     const contractMethods = new ContractMethods(props.magic);
+    await contractMethods.init();
     let amount = contractMethods.web3.utils.toBN(value);
 
     if (operation === "TopUp") {
-      contractMethods.initializeDepositTransaction(amount).then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {
-          console.log(error.toString() + " \n Amount: " + amount.toString());
-          alert(error.toString() + " \n Amount: " + amount.toString());
-        }
-      );
+      setLoadingMessage("Sending the deposit transaction...");
+      try {
+        let result = await contractMethods.initializeDepositTransaction(amount);
+        setLoadingMessage("");
+        setIsLoading(false);
+      } catch (error) {
+        setLoadingMessage(error.toString());
+        console.log(error.toString() + " \n Amount: " + amount.toString());
+        setIsActionSuccess(false);
+        setIsLoading(false);
+      }
     } else {
-      contractMethods.initializeWithdrawalTransaction(amount).then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {
-          console.log(
-            error.toString() + " \n Amount to withdraw: " + amount.toString()
-          );
-          alert(
-            error.toString() + " \n Amount to withdraw: " + amount.toString()
-          );
-        }
-      );
+      try {
+        setLoadingMessage("Sending the withdrawal transaction...");
+        let result = await contractMethods.initializeWithdrawalTransaction(
+          amount
+        );
+        setLoadingMessage("");
+        setIsLoading(false);
+      } catch (error) {
+        setLoadingMessage(error.toString());
+        console.log(
+          error.toString() + " \n Amount to withdraw: " + amount.toString()
+        );
+        setIsActionSuccess(false);
+        setIsLoading(false);
+      }
     }
-
-    openModal();
+    setIsLoading(false);
   };
 
   const openModal = () => {
@@ -148,6 +144,18 @@ const ConfirmFunds = (props) => {
       value: value,
       operation: operation,
     });
+  };
+  let modalLoading = () => {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator
+          size="large"
+          style={{ padding: 10 }}
+          color={COLORS.primary}
+        />
+        <Text style={{ textAlign: "center" }}>{loadingMessage}</Text>
+      </View>
+    );
   };
 
   return (
@@ -201,11 +209,16 @@ const ConfirmFunds = (props) => {
         ref={modalRef}
         style={isActionSuccess ? { height: 510 } : { height: 490 }}
         content={
-          <ModalContent
-            handleAction={closeModal}
-            operation={operation}
-            isActionSuccess={isActionSuccess}
-          />
+          isLoading ? (
+            modalLoading()
+          ) : (
+            <ModalContent
+              handleAction={closeModal}
+              operation={operation}
+              isActionSuccess={isActionSuccess}
+              errorMessage={loadingMessage}
+            />
+          )
         }
       />
     </Fragment>
@@ -310,7 +323,7 @@ const modalStyles = StyleSheet.create({
     color: "#333333",
     textAlign: "center",
     fontFamily: "Rubik_400Regular",
-    marginTop: 25,
+    marginTop: 20,
   },
 
   button: {
@@ -319,7 +332,7 @@ const modalStyles = StyleSheet.create({
     color: "#133FDB",
     textAlign: "center",
     fontFamily: "Rubik_500Medium",
-    marginTop: 60,
+    marginTop: 50,
   },
 });
 const mapStateToProps = (state) => {

@@ -120,7 +120,7 @@ const RequestCard = (props) => {
             </View>
             <View style={styles.requestInfoContainer}>
               <Text style={styles.title}>
-                {props.type === "deposit"
+                {props.type === "DEPOSIT"
                   ? "Deposit Request"
                   : "Withdraw Request"}
               </Text>

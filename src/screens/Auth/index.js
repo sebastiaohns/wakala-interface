@@ -24,31 +24,38 @@ function SignUpScreen({ navigation, magic }) {
 
   // phone number input
   const [value, setValue] = useState("");
-  const [valid, setValid] = useState(false);
+  const [valid, setValid] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const phoneInput = useRef();
 
   // Trigger magic link for user to login / generate wallet
   const login = async () => {
     try {
-      const checkValid = phoneInput.current?.isValidNumber();
-      setValid(checkValid ? checkValid : false);
-      let DID = await magic.auth.loginWithSMS({
-        phoneNumber: value, //pass the phone input value to get otp sms
-      });
+      const isValid = phoneInput.current?.isValidNumber(value);
+      setValid(isValid);
 
-      // Consume decentralized identity (DID)
-      if (DID !== null) {
-        magic.user.getMetadata().then((userMetadata) => {
-          setUser(userMetadata);
-          dispatch({
-            type: "LOGIN",
-            payload: { phoneNumber: value, userMetadata: userMetadata },
-          });
+      if (isValid) {
+        let DID = await magic.auth.loginWithSMS({
+          phoneNumber: value, //pass the phone input value to get otp sms
         });
+
+        // Consume decentralized identity (DID)
+        if (DID !== null) {
+          magic.user.getMetadata().then((userMetadata) => {
+            setUser(userMetadata);
+            dispatch({
+              type: "LOGIN",
+              payload: { phoneNumber: value, userMetadata: userMetadata },
+            });
+          });
+        }
+        //TODO Navigate to Terms and Conditions Page
+        navigation.navigate("ToC");
+      } else {
+        setTimeout(() => {
+          setValid(true);
+        }, 2000);
       }
-      //TODO Navigate to Terms and Conditions Page
-      navigation.navigate("ToC");
     } catch (err) {
       alert(err);
     }
@@ -61,17 +68,6 @@ function SignUpScreen({ navigation, magic }) {
     console.log("logged out");
   };
 
-  // If user is logged in, fetch user wallet balance and the `message` variable value from the smart contract
-  /*useEffect(() => {
-      magic.user.isLoggedIn().then(isLoggedIn => {
-        if (!isLoggedIn) return setUser('');
-        magic.user.getMetadata().then(user => {
-          setUser(user);
-          fetchBalance(user.publicAddress);
-          fetchContractMessage();
-        });
-      })
-    }, [])*/
   const title = "A community \nthat you \nwill love.";
 
   return (
@@ -93,13 +89,15 @@ function SignUpScreen({ navigation, magic }) {
               <Text
                 style={{ ...FONTS.body3, fontSize: 14, alignSelf: "center" }}
               >
-                Enter Phone number to Login or sign up
+                Enter your phone number to join or log in.
               </Text>
               <View
                 style={{
                   marginTop: 20,
                   backgroundColor: COLORS.white,
                   borderRadius: 10,
+                  borderColor: valid ? "white" : "red",
+                  borderWidth: valid ? 0 : 1.5,
                 }}
               >
                 <PhoneInput
@@ -108,6 +106,12 @@ function SignUpScreen({ navigation, magic }) {
                   defaultCode="KE"
                   onChangeFormattedText={(text) => {
                     setValue(text);
+                  }}
+                  textContainerStyle={{
+                    borderRadius: 10,
+                  }}
+                  containerStyle={{
+                    borderRadius: 10,
                   }}
                   withDarkTheme
                   withShadow
