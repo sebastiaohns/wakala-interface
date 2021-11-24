@@ -3,10 +3,10 @@ import * as React from "react";
 import "./global";
 //import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import {Provider} from 'react-redux';
-import {createStore} from 'redux';
+import { Provider } from "react-redux";
+import { createStore } from "redux";
 import AppLoading from "expo-app-loading";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useFonts,
   Inter_400Regular,
@@ -24,8 +24,7 @@ import { DMSans_700Bold, DMSans_400Regular } from "@expo-google-fonts/dm-sans";
 
 import globalStore from "./src/redux/GlobalStore";
 import Screens from "./src/screens";
-import {Magic} from "@magic-sdk/react-native";
-
+import { Magic } from "@magic-sdk/react-native";
 
 const store = createStore(globalStore);
 const magic = new Magic("pk_live_5B2A9951805695BB", {
@@ -41,17 +40,17 @@ const magic = new Magic("pk_live_5B2A9951805695BB", {
 
 const loadAppSession = async () => {
   try {
-    let user = await AsyncStorage.getItem('user')
-    let data = JSON.parse(user)
-    let action = {type: "INIT", value: {...data, magic: magic}}
-    console.log(data)
-    store.dispatch(action)
-    return true
+    let user = await AsyncStorage.getItem("user");
+    let data = JSON.parse(user);
+    let action = { type: "INIT", value: { ...data, magic: magic } };
+    console.log(data);
+    store.dispatch(action);
+    return true;
   } catch (err) {
-    console.log(err)
-    return true
+    console.log(err);
+    return true;
   }
-}
+};
 
 const App = () => {
   let [fontsLoaded] = useFonts({
@@ -67,20 +66,23 @@ const App = () => {
     DMSans_400Regular,
   });
 
-  let [isReady, setReady] = React.useState(false)
+  let [isReady, setReady] = React.useState(false);
   if (!isReady || !fontsLoaded) {
-    return <AppLoading startAsync={loadAppSession}
-                       onFinish={() => setReady(true)}
-                       onError={console.warn}
-                       autoHideSplash={true}
-    />;
+    return (
+      <AppLoading
+        startAsync={loadAppSession}
+        onFinish={() => setReady(true)}
+        onError={console.warn}
+        autoHideSplash={true}
+      />
+    );
   } else {
     return (
-        <Provider store={store}>
-          <NavigationContainer>
-            <Screens />
-          </NavigationContainer>
-        </Provider>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Screens />
+        </NavigationContainer>
+      </Provider>
     );
   }
 };
