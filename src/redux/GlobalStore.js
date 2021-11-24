@@ -11,7 +11,8 @@ let initialState = {
     finishedBoarding: false,
     userMetadata: null,
     magic: {},
-    phoneNumber: null
+    phoneNumber: null,
+    transactions: []
 }
 
 
@@ -37,6 +38,16 @@ export default function globalStore(state = initialState, action) {
             //Todo Implement all the logout logic
             nextState = {...state, finishedBoarding: false}
             saveSession(nextState).then()
+            return nextState || state
+
+        case 'ADD_TRANSACTION':
+            const exists = state.transactions.find( item => item.id === action.value.id)
+            if(exists === undefined) {
+                nextState = {...state, transactions: [...state.transactions, action.value]}
+            }
+            else {
+                return state
+            }
             return nextState || state
         default:
             return state

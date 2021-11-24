@@ -19,6 +19,8 @@ import RequestCard from "../../components/RequestCard";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import rawData from "../../utils/DepositRequestData";
 import { MODEL, HOME_EMPTY } from "../../assets/images";
+import ContractMethods from "../../utils/celo-integration/ContractMethods";
+import {connect, useDispatch} from "react-redux";
 
 const NavMenu = (props) => {
   const navigation = useNavigation();
@@ -79,11 +81,12 @@ const BannerContent = (props) => {
   );
 };
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, magic, transactions }) => {
   const bannerRef = useRef();
 
   const [isEmpty, setIsEmpty] = useState(true);
   const [depositRequestData, setDepositRequestData] = useState([]);
+  const dispatch = useDispatch()
 
   function getDepositRequestData() {
     setDepositRequestData(rawData);
@@ -94,7 +97,7 @@ const HomeScreen = ({ navigation }) => {
   }
 
   function removeDepositRequestItem(id) {
-    var newData = depositRequestData.filter((item) => item._id != id);
+    const newData = depositRequestData.filter((item) => item._id !== id);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     setDepositRequestData(newData);
 
@@ -103,9 +106,31 @@ const HomeScreen = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     getDepositRequestData();
+    const isLoggedIn = await magic.user.isLoggedIn()
+    if (isLoggedIn) {
+      const contractMethods = new ContractMethods(magic)
+      await contractMethods.init()
+      const transactions = contractMethods.initEventListeners()
+      const dispatchNewTx = (tx) => {
+        dispatch({type: "ADD_TRANSACTION", value: tx})
+      }
+      contractMethods.getPastEvents(dispatchNewTx)
+      console.log(contractMethods.getTransactions())
+    }
   }, []);
+  const makeViewable = (_transactions) => {
+    let newTXs = []
+    _transactions.forEach(tx => {
+      let newTX = tx
+      newTX._id = tx.id
+      newTX.stars = 0
+      newTX.type = tx.txType
+      newTXs.push(newTX)
+    })
+    return newTXs
+  }
 
   return (
     <Fragment>
@@ -133,7 +158,7 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             <FlatList
-              data={depositRequestData}
+              data={[...makeViewable(transactions), ...depositRequestData]}
               keyExtractor={(item) => item._id}
               renderItem={({ item }) => (
                 <RequestCard
@@ -288,4 +313,18 @@ const bannerStyles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+const mapStateToProps = (state) => {
+  return {
+    magic: state.magic,
+    transactions: state.transactions
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action);
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

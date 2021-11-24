@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet,   // CSS-like styles
-    Text,         // Renders text
-    View,          // Container component
-    Image, TouchableOpacity
+    StyleSheet,
+    Text,
+    View,
+    Image
 } from 'react-native';
-import {LinearGradient} from "expo-linear-gradient";
 
 import Swiper from '../../components/Swiper';
 import {SLIDER_IMAGE_001, SLIDER_IMAGE_002, SLIDER_IMAGE_003, SLIDER_IMAGE_004} from "../../assets/images";
-import appTheme, {COLORS, FONTS, SIZES} from "../../consts/theme";
+import {COLORS, FONTS, SIZES} from "../../consts/theme";
 import ScreenCmpt from "../../components/ScreenCmpt";
 
 export default class OnboardingScreen extends Component {
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     // Text below header
     text: {
         ...FONTS.body3,
-        color: appTheme.COLORS.textBlack,
+        color: COLORS.textBlack,
         fontSize: 18,
         marginHorizontal: 40,
         textAlign: 'center',

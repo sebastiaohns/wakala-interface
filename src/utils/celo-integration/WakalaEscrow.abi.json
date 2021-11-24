@@ -1,20 +1,14 @@
 [
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_encryptionKey",
-				"type": "string"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
 					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
@@ -34,16 +28,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -91,6 +75,11 @@
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
 						"type": "uint8"
@@ -109,16 +98,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -166,6 +145,11 @@
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
 						"type": "uint8"
@@ -184,16 +168,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -241,6 +215,11 @@
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
 						"type": "uint8"
@@ -259,16 +238,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -316,6 +285,11 @@
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
 						"type": "uint8"
@@ -334,16 +308,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -391,6 +355,11 @@
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
 						"internalType": "enum WakalaEscrow.TransactionType",
 						"name": "txType",
 						"type": "uint8"
@@ -409,16 +378,6 @@
 						"internalType": "enum WakalaEscrow.Status",
 						"name": "status",
 						"type": "uint8"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "clientPhoneNo",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "agentPhoneNo",
-						"type": "bytes32"
 					},
 					{
 						"internalType": "uint256",
@@ -523,6 +482,11 @@
 		"name": "escrowedPayments",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
 				"internalType": "enum WakalaEscrow.TransactionType",
 				"name": "txType",
 				"type": "uint8"
@@ -541,16 +505,6 @@
 				"internalType": "enum WakalaEscrow.Status",
 				"name": "status",
 				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "clientPhoneNo",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "agentPhoneNo",
-				"type": "bytes32"
 			},
 			{
 				"internalType": "uint256",
@@ -621,7 +575,7 @@
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
