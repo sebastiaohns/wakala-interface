@@ -1,20 +1,19 @@
 import Auth from "./reducers/Auth";
-import {Magic} from "@magic-sdk/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-const saveSession = async (state) => {
-    await AsyncStorage.setItem('user', JSON.stringify({...state, magic: null}))
-}
 
 let initialState = {
     finishedBoarding: false,
     userMetadata: null,
     magic: {},
     phoneNumber: null,
-    transactions: []
+    transactions: [],
+    contractMethods: {}
 }
 
+const saveSession = async (state) => {
+    await AsyncStorage.setItem('user', JSON.stringify({...state, magic: null, contractMethods: null}))
+}
 
 export default function globalStore(state = initialState, action) {
     let nextState
@@ -22,6 +21,9 @@ export default function globalStore(state = initialState, action) {
     switch(action.type){
         case 'INIT':
             nextState = {...state, ...action.value}
+            return nextState || state
+        case 'INIT_CONTRACT_METHODS':
+            nextState = {...state, contractMethods: action.value}
             return nextState || state
         case 'UPDATE_USER_METADATA':
             nextState = {...state, ...action.value}
@@ -41,12 +43,16 @@ export default function globalStore(state = initialState, action) {
             return nextState || state
 
         case 'ADD_TRANSACTION':
-            const exists = state.transactions.find( item => item.id === action.value.id)
-            if(exists === undefined) {
-                nextState = {...state, transactions: [...state.transactions, action.value]}
+            const index = state.transactions.findIndex( item => item.id === action.value.id)
+            if(index === -1) {
+                nextState = {...state, transactions: [action.value, ...state.transactions]}
             }
             else {
-                return state
+                // We just update the transaction
+                let elements = state.transactions
+                console.log(elements[index])
+                elements.splice(index, 1)
+                nextState = {...state, transactions: [action.value, ...elements]}
             }
             return nextState || state
         default:

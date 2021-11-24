@@ -8,8 +8,14 @@ import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import Modal from "../../components/Modal";
 
-import { COLORS, SIZES } from "../../consts/theme";
+import {COLORS, FONTS, SIZES} from "../../consts/theme";
 import { ERROR, BORED } from "../../assets/images";
+import {mainStyles, cardStyles, modalStyles} from "../../consts/transactionScreenStyles";
+import ContractMethods from "../../utils/celo-integration/ContractMethods";
+import {connect} from "react-redux";
+import ModalLoading from "../../components/ModalLoading";
+
+const styles = mainStyles
 
 const CardElement = (props) => {
   return (
@@ -78,6 +84,9 @@ const ModalContent = (props) => {
           <Text style={modalStyles.text}>
             Something just happened. Please try again.
           </Text>
+          <Text style={{ ...FONTS.body5, textAlign: "center", marginTop: 5 }}>
+            {props.errorMessage}
+          </Text>
           <TouchableOpacity onPress={() => props.handleAction()}>
             <Text style={modalStyles.button}>Try again</Text>
           </TouchableOpacity>
@@ -94,33 +103,39 @@ const ConfirmPayment = () => {
 
   const type = route.params.type;
   const value = route.params.value;
+  const transaction = route.params.transaction
 
   const [isActionSuccess, setIsActionSuccess] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const handleAction = async () => {
-    // Call function to perform the addressed action
-    // If response is success the set isOperationSuccess
-    // to true and open modal
-    // if (type === "deposit") {
-    //   performDepositAction().then(
-    //     (response) => {
-    //       setIsActionSuccess(true);
-    //     },
-    //     (error) => {
-    //       setIsActionSuccess(false);
-    //     }
-    //   );
-    // } else {
-    //   performWithdrawAction().then(
-    //     (response) => {
-    //       setIsActionSuccess(true);
-    //     },
-    //     (error) => {
-    //       setIsActionSuccess(false);
-    //     }
-    //   );
-    // }
     openModal();
+    //Init
+    setIsLoading(true);
+    setLoadingMessage("Initializing the transaction...");
+    let contractMethods = new ContractMethods(props.magic)
+    if(props.contractMethods.initialized){
+      contractMethods = props.contractMethods
+    }else {
+      setLoadingMessage("Initializing the Blockchain connection...")
+      await contractMethods.init()
+      dispatch({
+        type: "INIT_CONTRACT_METHODS",
+        value: contractMethods,
+      });
+    }
+      setLoadingMessage("Sending the transaction confirmation...");
+      try {
+        let result = await contractMethods.agentConfirmPayment(transaction.id);
+        setLoadingMessage("");
+        setIsLoading(false);
+      } catch (error) {
+        setLoadingMessage(error.toString());
+        setIsActionSuccess(false);
+        setIsLoading(false);
+      }
+    setIsLoading(false);
   };
 
   const openModal = () => {
@@ -135,7 +150,7 @@ const ConfirmPayment = () => {
 
     modalRef.current?.closeModal();
 
-    if (type === "deposit") {
+    if (type === "DEPOSIT") {
       navigation.navigate("Rate", { operation: type });
     } else {
       navigation.navigate("Success", { operation: type });
@@ -192,170 +207,40 @@ const ConfirmPayment = () => {
           </View>
         </View>
       </ScreenCmpt>
-
       <Modal
-        ref={modalRef}
-        style={
-          !isActionSuccess
-            ? { height: 490 }
-            : type === "deposit"
-            ? { height: 300 }
-            : { height: 420 }
-        }
-        content={
-          <ModalContent
-            handleAction={closeModal}
-            type={type}
-            isActionSuccess={isActionSuccess}
-          />
-        }
+          ref={modalRef}
+          style={
+            !isActionSuccess ? { height: 490 } : type === "DEPOSIT" ? { height: 300 } : { height: 420 }
+          }
+          content={
+            isLoading ? (
+                <ModalLoading loadingMessage={loadingMessage} />
+            ) : (
+                <ModalContent
+                    handleAction={closeModal}
+                    operation={type}
+                    isActionSuccess={isActionSuccess}
+                    errorMessage={loadingMessage}
+                />
+            )
+          }
       />
     </Fragment>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 30,
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+const mapStateToProps = (state) => {
+  return {
+    magic: state.magic,
+    contractMethods: state.contractMethods
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action);
+    },
+  };
+};
 
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  iconContainer: {
-    width: 45,
-    height: 38,
-    borderRadius: 6,
-    backgroundColor: "#4840BB",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
-  },
-
-  title: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#333333",
-    fontFamily: "Rubik_500Medium",
-  },
-
-  text: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: "#333333",
-    fontFamily: "Rubik_400Regular",
-  },
-
-  secondaryButtonText: {
-    fontSize: 20,
-    lineHeight: 24,
-    fontFamily: "Rubik_500Medium",
-    textAlign: "center",
-    color: "#FFF",
-  },
-
-  button: {
-    width: "auto",
-    height: 56,
-    marginTop: 10,
-    justifyContent: "center",
-  },
-});
-
-const cardStyles = StyleSheet.create({
-  container: {
-    height: SIZES.height * 0.35,
-    width: "100%",
-    borderRadius: 16,
-    backgroundColor: "#FFF",
-    justifyContent: "space-around",
-    padding: 15,
-  },
-
-  subTitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#A2A3A2",
-    fontFamily: "Rubik_500Medium",
-  },
-
-  title: {
-    fontSize: 28,
-    lineHeight: 34,
-    color: "#4840BB",
-    fontFamily: "Rubik_700Bold",
-  },
-
-  copyContainer: {
-    width: 70,
-    height: 30,
-    marginTop: 10,
-    borderRadius: 16,
-    justifyContent: "center",
-    backgroundColor: "#F5F5F5",
-  },
-
-  copyText: {
-    fontSize: 12,
-    lineHeight: 18,
-    color: "#333333",
-    textAlign: "center",
-    fontFamily: "Rubik_500Medium",
-  },
-});
-
-const modalStyles = StyleSheet.create({
-  container: {
-    height: "auto",
-    paddingVertical: 20,
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-
-  image: {
-    height: 70,
-    maxWidth: SIZES.width * 0.8,
-    resizeMode: "contain",
-    marginBottom: 20,
-  },
-
-  errorImage: {
-    height: 180,
-    maxWidth: SIZES.width * 0.8,
-    resizeMode: "contain",
-    marginBottom: 20,
-  },
-
-  title: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#333333",
-    textAlign: "center",
-    fontFamily: "Rubik_500Medium",
-  },
-
-  text: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: "#333333",
-    textAlign: "center",
-    fontFamily: "Rubik_400Regular",
-    marginTop: 25,
-  },
-
-  button: {
-    fontSize: 20,
-    lineHeight: 24,
-    color: "#133FDB",
-    textAlign: "center",
-    fontFamily: "Rubik_500Medium",
-    marginTop: 60,
-  },
-});
-
-export default ConfirmPayment;
+export default connect(mapStateToProps, mapDispatchToProps)(ConfirmPayment);
