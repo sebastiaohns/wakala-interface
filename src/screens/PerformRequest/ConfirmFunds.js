@@ -1,5 +1,12 @@
 import React, { Fragment, useRef, useState } from "react";
-import { Image, View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  Image,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,7 +19,7 @@ import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
-import {COLORS, FONTS, SIZES} from "../../consts/theme";
+import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { ERROR, SHARED } from "../../assets/images";
 
 const MaskedValue = (props) => {
@@ -56,7 +63,9 @@ const ModalContent = (props) => {
           <Text style={modalStyles.text}>
             Something just happened. Please try again.
           </Text>
-          <Text style={{...FONTS.body5, textAlign: "center", marginTop: 5}}>{props.errorMessage}</Text>
+          <Text style={{ ...FONTS.body5, textAlign: "center", marginTop: 5 }}>
+            {props.errorMessage}
+          </Text>
           <TouchableOpacity onPress={() => props.handleAction()}>
             <Text style={modalStyles.button}>Try again</Text>
           </TouchableOpacity>
@@ -81,38 +90,42 @@ const ConfirmFunds = (props) => {
   const handleAction = async () => {
     openModal();
     //Init
-    setIsLoading(true)
-    setLoadingMessage("Initializing the transaction...")
+    setIsLoading(true);
+    setLoadingMessage("Initializing the transaction...");
     const contractMethods = new ContractMethods(props.magic);
-    await contractMethods.init()
+    await contractMethods.init();
     let amount = contractMethods.web3.utils.toBN(value);
 
     if (operation === "TopUp") {
-      setLoadingMessage("Sending the deposit transaction...")
-      try{
-        let result = await contractMethods.initializeDepositTransaction(amount)
-        setLoadingMessage("")
-        setIsLoading(false)
-      }catch (error) {
-        setLoadingMessage(error.toString())
+      setLoadingMessage("Sending the deposit transaction...");
+      try {
+        let result = await contractMethods.initializeDepositTransaction(amount);
+        setLoadingMessage("");
+        setIsLoading(false);
+      } catch (error) {
+        setLoadingMessage(error.toString());
         console.log(error.toString() + " \n Amount: " + amount.toString());
-        setIsActionSuccess(false)
-        setIsLoading(false)
+        setIsActionSuccess(false);
+        setIsLoading(false);
       }
     } else {
-      try{
-        setLoadingMessage("Sending the withdrawal transaction...")
-        let result = await contractMethods.initializeWithdrawalTransaction(amount)
-        setLoadingMessage("")
-        setIsLoading(false)
-      }catch (error) {
-        setLoadingMessage(error.toString())
-        console.log(error.toString() + " \n Amount to withdraw: " + amount.toString());
-        setIsActionSuccess(false)
-        setIsLoading(false)
+      try {
+        setLoadingMessage("Sending the withdrawal transaction...");
+        let result = await contractMethods.initializeWithdrawalTransaction(
+          amount
+        );
+        setLoadingMessage("");
+        setIsLoading(false);
+      } catch (error) {
+        setLoadingMessage(error.toString());
+        console.log(
+          error.toString() + " \n Amount to withdraw: " + amount.toString()
+        );
+        setIsActionSuccess(false);
+        setIsLoading(false);
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const openModal = () => {
@@ -133,13 +146,17 @@ const ConfirmFunds = (props) => {
     });
   };
   let modalLoading = () => {
-    return(
-        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-          <ActivityIndicator size="large" style={{padding: 10}} color={COLORS.primary} />
-          <Text style={{textAlign: "center"}}>{loadingMessage}</Text>
-        </View>
-    )
-  }
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator
+          size="large"
+          style={{ padding: 10 }}
+          color={COLORS.primary}
+        />
+        <Text style={{ textAlign: "center" }}>{loadingMessage}</Text>
+      </View>
+    );
+  };
 
   return (
     <Fragment>
@@ -191,13 +208,17 @@ const ConfirmFunds = (props) => {
       <Modal
         ref={modalRef}
         style={isActionSuccess ? { height: 510 } : { height: 490 }}
-        content={isLoading? modalLoading() :
-          <ModalContent
-            handleAction={closeModal}
-            operation={operation}
-            isActionSuccess={isActionSuccess}
-            errorMessage={loadingMessage}
-          />
+        content={
+          isLoading ? (
+            modalLoading()
+          ) : (
+            <ModalContent
+              handleAction={closeModal}
+              operation={operation}
+              isActionSuccess={isActionSuccess}
+              errorMessage={loadingMessage}
+            />
+          )
         }
       />
     </Fragment>

@@ -32,9 +32,9 @@ function SignUpScreen({ navigation, magic }) {
   const login = async () => {
     try {
       const isValid = phoneInput.current?.isValidNumber(value);
-      setValid(isValid );
+      setValid(isValid);
 
-      if(isValid){
+      if (isValid) {
         let DID = await magic.auth.loginWithSMS({
           phoneNumber: value, //pass the phone input value to get otp sms
         });
@@ -51,13 +51,11 @@ function SignUpScreen({ navigation, magic }) {
         }
         //TODO Navigate to Terms and Conditions Page
         navigation.navigate("ToC");
-      }else{
+      } else {
         setTimeout(() => {
-          setValid(true)
-        }, 2000)
+          setValid(true);
+        }, 2000);
       }
-
-
     } catch (err) {
       alert(err);
     }
@@ -98,8 +96,8 @@ function SignUpScreen({ navigation, magic }) {
                   marginTop: 20,
                   backgroundColor: COLORS.white,
                   borderRadius: 10,
-                  borderColor: valid? "white" : "red",
-                  borderWidth: valid? 0 : 1.5
+                  borderColor: valid ? "white" : "red",
+                  borderWidth: valid ? 0 : 1.5,
                 }}
               >
                 <PhoneInput
@@ -110,7 +108,7 @@ function SignUpScreen({ navigation, magic }) {
                     setValue(text);
                   }}
                   textContainerStyle={{
-                  borderRadius: 10
+                    borderRadius: 10,
                   }}
                   containerStyle={{
                     borderRadius: 10,

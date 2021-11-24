@@ -20,7 +20,7 @@ import { COLORS, SIZES, FONTS } from "../../consts/theme";
 import rawData from "../../utils/DepositRequestData";
 import { MODEL, HOME_EMPTY } from "../../assets/images";
 import ContractMethods from "../../utils/celo-integration/ContractMethods";
-import {connect, useDispatch} from "react-redux";
+import { connect, useDispatch } from "react-redux";
 
 const NavMenu = (props) => {
   const navigation = useNavigation();
@@ -86,7 +86,7 @@ const HomeScreen = ({ navigation, magic, transactions }) => {
 
   const [isEmpty, setIsEmpty] = useState(true);
   const [depositRequestData, setDepositRequestData] = useState([]);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   function getDepositRequestData() {
     setDepositRequestData(rawData);
@@ -108,29 +108,29 @@ const HomeScreen = ({ navigation, magic, transactions }) => {
 
   useEffect(async () => {
     getDepositRequestData();
-    const isLoggedIn = await magic.user.isLoggedIn()
+    const isLoggedIn = await magic.user.isLoggedIn();
     if (isLoggedIn) {
-      const contractMethods = new ContractMethods(magic)
-      await contractMethods.init()
-      const transactions = contractMethods.initEventListeners()
+      const contractMethods = new ContractMethods(magic);
+      await contractMethods.init();
+      const transactions = contractMethods.initEventListeners();
       const dispatchNewTx = (tx) => {
-        dispatch({type: "ADD_TRANSACTION", value: tx})
-      }
-      contractMethods.getPastEvents(dispatchNewTx)
-      console.log(contractMethods.getTransactions())
+        dispatch({ type: "ADD_TRANSACTION", value: tx });
+      };
+      contractMethods.getPastEvents(dispatchNewTx);
+      console.log(contractMethods.getTransactions());
     }
   }, []);
   const makeViewable = (_transactions) => {
-    let newTXs = []
-    _transactions.forEach(tx => {
-      let newTX = tx
-      newTX._id = tx.id
-      newTX.stars = 0
-      newTX.type = tx.txType
-      newTXs.push(newTX)
-    })
-    return newTXs
-  }
+    let newTXs = [];
+    _transactions.forEach((tx) => {
+      let newTX = tx;
+      newTX._id = tx.id;
+      newTX.stars = 0;
+      newTX.type = tx.txType;
+      newTXs.push(newTX);
+    });
+    return newTXs;
+  };
 
   return (
     <Fragment>
@@ -316,7 +316,7 @@ const bannerStyles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     magic: state.magic,
-    transactions: state.transactions
+    transactions: state.transactions,
   };
 };
 const mapDispatchToProps = (dispatch) => {
