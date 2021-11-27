@@ -1,9 +1,8 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView} from 'react-native'
-import PINInterface from "../../components/PINInterface";
-import {LinearGradient} from "expo-linear-gradient";
-import HeaderTitle from "../../components/HeaderTitle";
+import {View, StyleSheet} from 'react-native'
 import PINCode from '@haskkor/react-native-pincode'
+import {COLORS, FONTS, SIZES} from "../../consts/theme";
+import ScreenCmpt from "../../components/ScreenCmpt";
 
 function SetPIN({navigation}) {
     const [pin, setPin] = React.useState("")
@@ -15,24 +14,23 @@ function SetPIN({navigation}) {
             setPin(value)
             setTitle("Confirm PIN")
         }
-
     }
+
     return (
-        <LinearGradient style={styles.container}
-                        colors={["rgba(247, 239, 250, 1.0)", "rgba(252, 248, 237, 1.0)"]}
-                        start={[1, 0]}
-                        end={[1, 1]}>
-            <SafeAreaView style={styles.container}>
+        <ScreenCmpt>
                 <View style={styles.wrapper}>
                     <PINCode status={'choose'}
+                             stylePinCodeTextTitle={styles.title}
+                             stylePinCodeColorTitle={COLORS.primary}
+                             titleChoose={"Enter a PIN"}
+                             titleConfirm={"Confirm your PIN code"}
                              buttonDeleteText=""
                              subtitleChoose=""
-                             passwordLength={5}
+                             passwordLength={6}
                              pinCodeVisible={true}
                              finishProcess={() => navigation.navigate("ConnectPhone")} />
                 </View>
-            </SafeAreaView>
-        </LinearGradient>
+        </ScreenCmpt>
 
     );
 }
@@ -47,6 +45,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-around",
         paddingHorizontal: 25,
+    },
+    title: {
+        fontSize: 28,
+        color: "#4840BB",
+        lineHeight: 28.44,
+        fontFamily: "Rubik_500Medium",
+        width: 240,
+        alignSelf: "flex-start",
+        paddingTop: 30,
+        textAlign: 'center'
     },
 });
 

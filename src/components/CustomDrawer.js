@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 
-import { SIZES } from "../consts/theme";
+import { FONTS, SIZES } from "../consts/theme";
 import CountryInfo from "../utils/CountryInfo";
 import ContractMethods from "../utils/celo-integration/ContractMethods";
 
@@ -74,24 +74,25 @@ const CustomDrawer = (props) => {
         value: { userMetadata: userMetadata },
       });
       let contractMethods = new ContractMethods(magic);
-      if (props.contractMethods.initialized) {
-        contractMethods = props.contractMethods;
-      } else {
-        setLoadingMessage("Initializing the Blockchain connection...");
-        await contractMethods.init();
-        dispatch({
-          type: "INIT_CONTRACT_METHODS",
-          value: contractMethods,
-        });
-      }
+      setLoadingMessage("Initializing the Blockchain connection...");
+      await contractMethods.init();
+      dispatch({
+        type: "INIT_CONTRACT_METHODS",
+        value: contractMethods,
+      });
 
       setLoadingMessage("Getting user's Balance...");
-      let balance = await contractMethods.web3.eth.getBalance(publicAddress);
-      let amount = contractMethods.web3.utils.fromWei(balance, "ether");
-      setPhone(userMetadata.phoneNumber);
-
+      let totalBalance = await contractMethods.kit.getTotalBalance(
+        publicAddress
+      );
+      let money = totalBalance.cUSD;
+      //let balance = await contractMethods.web3.eth.getBalance(publicAddress)
+      let amount = contractMethods.web3.utils.fromWei(
+        money.toString(),
+        "ether"
+      );
       setCUSD(amount);
-      setKSH((amount * 10).toString());
+      setKSH(amount);
       setloading(false);
       pickFlag();
     } catch (error) {
@@ -138,8 +139,8 @@ const CustomDrawer = (props) => {
             <Text style={stylesBalance.cusd}>{cUSD} cUSD</Text>
           </>
         ) : (
-          <View style={{ justifyContent: "flex-end", height: "100%" }}>
-            <Text style={stylesBalance.cusd}>Loading...</Text>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <Text style={FONTS.body4}>{loadingMessage}</Text>
           </View>
         )}
       </View>
@@ -181,24 +182,6 @@ const CustomDrawer = (props) => {
     </SafeAreaView>
   );
 };
-
-const mapStateToProps = (state) => {
-  return {
-    magic: state.magic,
-    userMetadata: state.userMetadata,
-    contractMethods: state.contractMethods,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatch: async (action) => {
-      await dispatch(action);
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);
 
 const styles = StyleSheet.create({
   container: {
@@ -289,3 +272,19 @@ const stylesDrawerElement = StyleSheet.create({
     paddingLeft: 20,
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    magic: state.magic,
+    userMetadata: state.userMetadata,
+    contractMethods: state.contractMethods,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: async (action) => {
+      await dispatch(action);
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);
