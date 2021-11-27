@@ -1,20 +1,28 @@
-import React, { Fragment, useState, useRef } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { Fragment, useState, useRef, useCallback } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Linking,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
+import FloatingDialog from "../../components/FloatingDialog";
 import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
 import Modal from "../../components/Modal";
 
-import {COLORS, FONTS, SIZES} from "../../consts/theme";
+import { COLORS, FONTS, SIZES } from "../../consts/theme";
 import { ERROR, SHARED } from "../../assets/images";
 import ContractMethods from "../../utils/celo-integration/ContractMethods";
 import ModalLoading from "../../components/ModalLoading";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 const MaskedValue = (props) => {
   return (
@@ -70,27 +78,29 @@ const ModalContent = (props) => {
 const AcceptRequest = (props) => {
   const route = useRoute();
   const modalRef = useRef();
+  const floatingDialogRef = useRef();
   const navigation = useNavigation();
 
   const type = route.params.type;
   const value = route.params.value;
-  const transaction = route.params.transaction
+  const transaction = route.params.transaction;
 
   const [isActionSuccess, setIsActionSuccess] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleAction = async () => {
     openModal();
     //Init
     setIsLoading(true);
     setLoadingMessage("Initializing the transaction...");
-    let contractMethods = new ContractMethods(props.magic)
-    if(props.contractMethods instanceof ContractMethods){
-      contractMethods = props.contractMethods
-    }else {
-      setLoadingMessage("Initializing the Blockchain connection...")
-      await contractMethods.init()
+    let contractMethods = new ContractMethods(props.magic);
+    if (props.contractMethods instanceof ContractMethods) {
+      contractMethods = props.contractMethods;
+    } else {
+      setLoadingMessage("Initializing the Blockchain connection...");
+      await contractMethods.init();
       dispatch({
         type: "INIT_CONTRACT_METHODS",
         value: contractMethods,
@@ -100,7 +110,9 @@ const AcceptRequest = (props) => {
     if (type === "DEPOSIT") {
       setLoadingMessage("Sending the deposit transaction...");
       try {
-        let result = await contractMethods.agentAcceptDepositTransaction(transaction.id);
+        let result = await contractMethods.agentAcceptDepositTransaction(
+          transaction.id
+        );
         setLoadingMessage("");
         setIsLoading(false);
       } catch (error) {
@@ -111,7 +123,9 @@ const AcceptRequest = (props) => {
     } else {
       try {
         setLoadingMessage("Sending the withdrawal transaction...");
-        let result = await contractMethods.agentAcceptWithdrawalTransaction(transaction.id);
+        let result = await contractMethods.agentAcceptWithdrawalTransaction(
+          transaction.id
+        );
         setLoadingMessage("");
         setIsLoading(false);
       } catch (error) {
@@ -134,13 +148,51 @@ const AcceptRequest = (props) => {
     }
 
     modalRef.current?.closeModal();
-
-    navigation.navigate("Confirm Payment", {
-      value: value,
-      type: type,
-      transaction: transaction
-    });
+    navigation.navigate("Home Screen");
   };
+
+  const openDialog = () => {
+    floatingDialogRef.current?.openDialog();
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    floatingDialogRef.current?.closeDialog();
+    setIsDialogOpen(false);
+  };
+
+  const handleDialog = () => {
+    if (isDialogOpen) {
+      closeDialog();
+    } else {
+      openDialog();
+    }
+  };
+
+  const useViewSize = () => {
+    const [size, setSize] = useState(null);
+
+    const onLayout = useCallback((event) => {
+      const { x, y, width, height } = event.nativeEvent.layout;
+      setSize({ x, y, width, height });
+    }, []);
+
+    return [size, onLayout];
+  };
+
+  const useTextSize = () => {
+    const [size, setSize] = useState(null);
+
+    const onLayout = useCallback((event) => {
+      const { x, y, width, height } = event.nativeEvent.layout;
+      setSize({ x, y, width, height });
+    }, []);
+
+    return [size, onLayout];
+  };
+
+  const [viewSize, onViewLayout] = useViewSize();
+  const [textSize, onTextLayout] = useTextSize();
 
   return (
     <Fragment>
@@ -170,13 +222,42 @@ const AcceptRequest = (props) => {
                 <View style={styles.descriptionContainer}>
                   <View
                     style={{ flexDirection: "row", alignItems: "baseline" }}
+                    onLayout={onViewLayout}
                   >
-                    <Text style={styles.feesText}>Estimated Fees </Text>
-                    <Feather name="info" size={11} color="#222222" />
+                    <Text style={styles.feesText} onLayout={onTextLayout}>
+                      Estimated Fees{" "}
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        position: "absolute",
+                        top: viewSize ? viewSize.x + viewSize.height - 49 : 0,
+                        left: textSize ? textSize.width : 0,
+                      }}
+                      onPress={handleDialog}
+                    >
+                      <Feather name="info" size={11} color="#222222" />
+                    </TouchableOpacity>
                   </View>
 
                   <Text style={styles.receivesText}>Total you receive</Text>
                 </View>
+
+                <FloatingDialog
+                  ref={floatingDialogRef}
+                  posX={viewSize ? viewSize.x + 15 : 0}
+                  posY={textSize ? textSize.width - 30 : 0}
+                  content={
+                    <Text>
+                      Small fee necessary.... To learn more about fees, visit{" "}
+                      <Text
+                        style={{ color: "blue" }}
+                        onPress={() => Linking.openURL("wakala.xyz/fees.")}
+                      >
+                        wakala.xyz/fees.
+                      </Text>
+                    </Text>
+                  }
+                />
 
                 <View style={styles.AmountContainer}>
                   <MaskedValue style={styles.feesText} value={value * 0.01} />
@@ -202,20 +283,20 @@ const AcceptRequest = (props) => {
         </View>
       </ScreenCmpt>
       <Modal
-          ref={modalRef}
-          style={isActionSuccess ? { height: 510 } : { height: 490 }}
-          content={
-            isLoading ? (
-                <ModalLoading loadingMessage={loadingMessage} />
-            ) : (
-                <ModalContent
-                    handleAction={closeModal}
-                    operation={type}
-                    isActionSuccess={isActionSuccess}
-                    errorMessage={loadingMessage}
-                />
-            )
-          }
+        ref={modalRef}
+        style={isActionSuccess ? { height: 510 } : { height: 490 }}
+        content={
+          isLoading ? (
+            <ModalLoading loadingMessage={loadingMessage} />
+          ) : (
+            <ModalContent
+              handleAction={closeModal}
+              operation={type}
+              isActionSuccess={isActionSuccess}
+              errorMessage={loadingMessage}
+            />
+          )
+        }
       />
     </Fragment>
   );
@@ -351,7 +432,7 @@ const modalStyles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     magic: state.magic,
-    contractMethods: state.contractMethods
+    contractMethods: state.contractMethods,
   };
 };
 const mapDispatchToProps = (dispatch) => {
