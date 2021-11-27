@@ -8,19 +8,19 @@ import {
   LayoutAnimation,
   FlatList,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+
 import { Ionicons } from "@expo/vector-icons";
+import { connect, useDispatch } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 
 import Banner from "../../components/Banner";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import RequestCard from "../../components/RequestCard";
-
-import { COLORS, SIZES, FONTS } from "../../consts/theme";
-import rawData from "../../utils/DepositRequestData";
-import { MODEL, HOME_EMPTY } from "../../assets/images";
 import ContractMethods from "../../utils/celo-integration/ContractMethods";
-import { connect, useDispatch } from "react-redux";
+
+import { MODEL, HOME_EMPTY } from "../../assets/images";
+import { COLORS, SIZES, FONTS } from "../../consts/theme";
 
 const NavMenu = (props) => {
   const navigation = useNavigation();
@@ -68,7 +68,7 @@ const BannerContent = (props) => {
       <Image source={MODEL} style={bannerStyles.image} />
       <Text style={bannerStyles.title}>Coming soon</Text>
       <Text style={bannerStyles.text}>
-        Stay put, we are soon adding cash option.
+        Stay put, you will soon be able to send money to your friends.
       </Text>
 
       <TouchableOpacity
@@ -84,21 +84,10 @@ const BannerContent = (props) => {
 const HomeScreen = (props) => {
   const { navigation, magic, transactions } = props;
   const bannerRef = useRef();
-
-  const [isEmpty, setIsEmpty] = useState(true);
-  const [depositRequestData, setDepositRequestData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const dispatch = useDispatch();
   let contractMethods = new ContractMethods(magic);
-
-  function getDepositRequestData() {
-    setDepositRequestData(rawData);
-
-    if (rawData.length >= 1) {
-      setIsEmpty(false);
-    }
-  }
 
   function removeDepositRequestItem(id) {
     const newData = depositRequestData.filter((item) => item._id !== id);

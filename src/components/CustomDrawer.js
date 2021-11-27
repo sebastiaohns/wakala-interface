@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -7,50 +7,67 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import {
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from "@react-navigation/drawer";
 import { AntDesign } from "@expo/vector-icons";
+import { connect, useDispatch } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
 
 import { SIZES } from "../consts/theme";
 import CountryInfo from "../utils/CountryInfo";
-import { connect, useDispatch } from "react-redux";
 import ContractMethods from "../utils/celo-integration/ContractMethods";
-import { useNavigation } from "@react-navigation/native";
+
+const DrawerElement = (props) => {
+  return (
+    <TouchableOpacity
+      style={stylesDrawerElement.container}
+      onPress={props.handleAction}
+    >
+      <Text style={stylesDrawerElement.text}>{props.label}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const CustomDrawer = (props) => {
   const navigation = useNavigation();
-  const [phone, setPhone] = useState("+254 706 427718");
-  const [flag, setFlag] = useState("");
-  const [loading, setloading] = useState(true);
-  const [KSH, setKSH] = useState("0");
-  const [cUSD, setCUSD] = useState("0");
   const dispatch = useDispatch();
-  const [user, setUser] = React.useState("");
+  const magic = props.magic;
+
+  const [KSH, setKSH] = useState("0");
+  const [flag, setFlag] = useState("");
+  const [user, setUser] = useState("");
+  const [cUSD, setCUSD] = useState("0");
+  const [loading, setloading] = useState(true);
+  const [phone, setPhone] = useState("");
   const [loadingMessage, setLoadingMessage] = useState("");
 
   function pickFlag() {
-    const phone_split = phone.split(" ");
-    const dial_code = phone_split[0];
+    let len = 4;
+    while (len > 0) {
+      let country_code = phone.substring(0, len);
+      CountryInfo.forEach((element) => {
+        if (element.dial_code === country_code) {
+          setFlag(element.flag);
+        }
+      });
+      len--;
+    }
+  }
 
-    CountryInfo.forEach((element) => {
-      if (element.dial_code === dial_code) {
-        setFlag(element.flag);
-      }
+  // Logout of Magic session
+  function logout() {
+    magic.user.logout().then(() => {
+      setUser("");
+      dispatch({ type: "LOGOUT", payload: {} });
     });
   }
 
-  const magic = props.magic;
-
   useEffect(async () => {
-    pickFlag();
     try {
       setloading(true);
       setLoadingMessage("Getting user's Metadata...");
       let userMetadata = await magic.user.getMetadata();
+
       let { publicAddress } = userMetadata;
       dispatch({
         type: "UPDATE_USER_METADATA",
@@ -71,109 +88,97 @@ const CustomDrawer = (props) => {
       setLoadingMessage("Getting user's Balance...");
       let balance = await contractMethods.web3.eth.getBalance(publicAddress);
       let amount = contractMethods.web3.utils.fromWei(balance, "ether");
+      setPhone(userMetadata.phoneNumber);
+
       setCUSD(amount);
       setKSH((amount * 10).toString());
       setloading(false);
+      pickFlag();
     } catch (error) {
       alert(error);
       setloading(false);
     }
   }, []);
 
-  // Logout of Magic session
-  function logout() {
-    magic.user.logout().then(() => {
-      setUser("");
-      dispatch({ type: "LOGOUT", payload: {} });
-    });
-  }
-
   return (
-    <Fragment>
-      <SafeAreaView style={{ flex: 0 }} />
-
-      <SafeAreaView style={styles.container}>
-        <View>
-          <LinearGradient
-            colors={[
-              "rgba(255, 140, 161, 0.08)",
-              "rgba(252, 207, 47, 0.08)",
-              "rgba(255, 255, 255, 0.08)",
-              "rgba(248, 48, 180, 0.08)",
-              "rgba(47, 68, 252, 0.08)",
-            ]}
-            start={[0, 1]}
-            end={[1, 0]}
-            style={styles.header}
-          >
-            <View>
-              <View style={styles.img} />
-              <View style={styles.phoneStyle}>
-                <Text style={styles.smallText}>{flag} </Text>
-                <Text style={styles.smallText}>{phone}</Text>
-              </View>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <LinearGradient
+          colors={[
+            "rgba(255, 140, 161, 0.08)",
+            "rgba(252, 207, 47, 0.08)",
+            "rgba(255, 255, 255, 0.08)",
+            "rgba(248, 48, 180, 0.08)",
+            "rgba(47, 68, 252, 0.08)",
+          ]}
+          start={[0, 1]}
+          end={[1, 0]}
+          style={styles.header}
+        >
+          <View style={{ marginBottom: 60 }}>
+            <View style={styles.img} />
+            <View style={styles.phoneStyle}>
+              <Text style={styles.smallText}>{flag} </Text>
+              <Text style={styles.smallText}>{phone}</Text>
             </View>
-            <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
-              <AntDesign name="close" size={32} color="black" />
-            </TouchableOpacity>
-          </LinearGradient>
-        </View>
-
-        <View style={stylesBalance.balance}>
-          {!loading ? (
-            <>
-              <View>
-                <Text style={stylesBalance.text}>Current Balance</Text>
-                <Text style={stylesBalance.ksh}>Ksh {KSH}</Text>
-              </View>
-              <Text style={stylesBalance.cusd}>{cUSD} cUSD</Text>
-            </>
-          ) : (
-            <>
-              <Text style={stylesBalance.ksh}>Loading...</Text>
-            </>
-          )}
-        </View>
-
-        <DrawerContentScrollView {...props}>
-          <View
-            style={{
-              borderTopWidth: 0.2,
-              borderTopColor: "#444444",
-              borderBottomWidth: 0.2,
-              borderBottomColor: "#444444",
-            }}
-          >
-            <DrawerItem
-              label="Home"
-              onPress={() => navigation.navigate("Home Screen")}
-            />
-            <DrawerItem label="Pending Requests" />
-            <DrawerItem label="Open Requests" />
-            <DrawerItem label="Transaction History" />
-            <DrawerItem
-              label="Governance"
-              onPress={() => navigation.navigate("Governance")}
-            />
-            <DrawerItem label="Ramp" />
-            <DrawerItem
-              label="Settings"
-              onPress={() => navigation.navigate("Settings")}
-            />
-            <DrawerItem
-              label="Help"
-              onPress={() => navigation.navigate("HelpScreen")}
-            />
-            <DrawerItem label="Sign out" onPress={() => logout()} />
           </View>
-        </DrawerContentScrollView>
+          <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
+            <AntDesign name="close" size={24} color="black" />
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
 
-        <View style={{ padding: 20 }}>
+      <View style={stylesBalance.balance}>
+        {!loading ? (
+          <>
+            <View>
+              <Text style={stylesBalance.text}>Current Balance</Text>
+              <Text style={stylesBalance.ksh}>Ksh {KSH}</Text>
+            </View>
+            <Text style={stylesBalance.cusd}>{cUSD} cUSD</Text>
+          </>
+        ) : (
+          <View style={{ justifyContent: "flex-end", height: "100%" }}>
+            <Text style={stylesBalance.cusd}>Loading...</Text>
+          </View>
+        )}
+      </View>
+
+      <DrawerContentScrollView {...props}>
+        <DrawerElement
+          label={"Home"}
+          handleAction={() => navigation.navigate("Home Screen")}
+        />
+        <DrawerElement label={"Pending Requests"} />
+        <DrawerElement label={"Open Requests"} />
+        <DrawerElement label={"Transaction History"} />
+        <DrawerElement
+          label={"Governance"}
+          handleAction={() => navigation.navigate("Governance")}
+        />
+        <DrawerElement label={"Ramp"} handleAction={pickFlag} />
+        <DrawerElement
+          label={"Settings"}
+          handleAction={() => navigation.navigate("Settings")}
+        />
+        <DrawerElement
+          label={"Help"}
+          handleAction={() => navigation.navigate("HelpScreen")}
+        />
+        <DrawerElement label={"Sign out"} handleAction={() => logout()} />
+        <View
+          style={{
+            borderTopColor: "#444444",
+            borderTopWidth: 0.2,
+            padding: 20,
+          }}
+        >
           <Text style={styles.smallText}>Version 2.0.1</Text>
         </View>
-        <magic.Relayer />
-      </SafeAreaView>
-    </Fragment>
+      </DrawerContentScrollView>
+
+      <magic.Relayer />
+    </SafeAreaView>
   );
 };
 
@@ -184,6 +189,7 @@ const mapStateToProps = (state) => {
     contractMethods: state.contractMethods,
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch: async (action) => {
@@ -191,16 +197,18 @@ const mapDispatchToProps = (dispatch) => {
     },
   };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: SIZES.width * 0.8,
+    height: SIZES.height,
     backgroundColor: "#F5F5F5",
   },
 
   header: {
-    height: 220,
+    height: "auto",
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -231,9 +239,9 @@ const styles = StyleSheet.create({
 
 const stylesBalance = StyleSheet.create({
   balance: {
-    width: SIZES.width * 0.6,
+    width: SIZES.width * 0.75,
     height: 100,
-    marginLeft: (SIZES.width * 0.1) / 2,
+    marginLeft: (SIZES.width * 0.05) / 2,
     marginTop: -50,
     borderRadius: 14,
     backgroundColor: "#FFFFFF",
@@ -248,19 +256,36 @@ const stylesBalance = StyleSheet.create({
 
   text: {
     fontSize: 12,
-    fontFamily: "Rubik_400Regular",
     color: "#333333",
+    fontFamily: "Rubik_400Regular",
   },
 
   ksh: {
     fontSize: 24,
-    fontFamily: "Rubik_500Medium",
     color: "#333333",
+    fontFamily: "Rubik_500Medium",
   },
 
   cusd: {
     fontSize: 16,
-    fontFamily: "Rubik_500Medium",
     color: "#333333",
+    fontFamily: "Rubik_500Medium",
+  },
+});
+
+const stylesDrawerElement = StyleSheet.create({
+  container: {
+    height: 54,
+    justifyContent: "center",
+    borderTopColor: "#444444",
+    borderTopWidth: 0.2,
+  },
+
+  text: {
+    fontSize: 16,
+    lineHeight: 30,
+    color: "#4840BB",
+    fontFamily: "Rubik_400Regular",
+    paddingLeft: 20,
   },
 });
