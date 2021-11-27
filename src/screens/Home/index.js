@@ -8,19 +8,19 @@ import {
   LayoutAnimation,
   FlatList,
 } from "react-native";
-
-import { Ionicons } from "@expo/vector-icons";
-import { connect, useDispatch } from "react-redux";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import Banner from "../../components/Banner";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import RequestCard from "../../components/RequestCard";
-import ContractMethods from "../../utils/celo-integration/ContractMethods";
 
-import { MODEL, HOME_EMPTY } from "../../assets/images";
 import { COLORS, SIZES, FONTS } from "../../consts/theme";
+import rawData from "../../utils/DepositRequestData";
+import { MODEL, HOME_EMPTY } from "../../assets/images";
+import ContractMethods from "../../utils/celo-integration/ContractMethods";
+import { connect, useDispatch } from "react-redux";
 
 const NavMenu = (props) => {
   const navigation = useNavigation();
@@ -68,7 +68,7 @@ const BannerContent = (props) => {
       <Image source={MODEL} style={bannerStyles.image} />
       <Text style={bannerStyles.title}>Coming soon</Text>
       <Text style={bannerStyles.text}>
-        Stay put, you will soon be able to send money to your friends.
+        Stay put, we are soon adding cash option.
       </Text>
 
       <TouchableOpacity
@@ -82,12 +82,24 @@ const BannerContent = (props) => {
 };
 
 const HomeScreen = (props) => {
-  const { navigation, magic, transactions } = props;
+  const { navigation, magic, transactions } = props
   const bannerRef = useRef();
+
+  const [isEmpty, setIsEmpty] = useState(true);
+  const [depositRequestData, setDepositRequestData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const dispatch = useDispatch();
   let contractMethods = new ContractMethods(magic);
+
+
+  function getDepositRequestData() {
+    setDepositRequestData(rawData);
+
+    if (rawData.length >= 1) {
+      setIsEmpty(false);
+    }
+  }
 
   function removeDepositRequestItem(id) {
     const newData = depositRequestData.filter((item) => item._id !== id);
@@ -99,42 +111,56 @@ const HomeScreen = (props) => {
     }
   }
   const onRefresh = async () => {
-    setIsFetching(true);
+    setIsFetching(true)
     const transactions = contractMethods.initEventListeners();
     const dispatchNewTx = (tx) => {
-      dispatch({ type: "ADD_TRANSACTION", value: tx });
+      if(tx.status === "AWAITING_CONFIRMATIONS"
+          && (tx.clientAddress === contractMethods.kit.defaultAccount || tx.agentAddress === contractMethods.kit.defaultAccount)){
+        navigation.navigate("Confirm Payment", {
+            value: tx.amount,
+            operation: tx.txType,
+            transaction: tx
+          });
+      }
+      if(tx.status === "AWAITING_AGENT"
+          && tx.clientAddress !== contractMethods.kit.defaultAccount
+          && tx.agentAddress !== contractMethods.kit.defaultAccount){
+        dispatch({ type: "ADD_TRANSACTION", value: tx });
+      }
+
     };
     contractMethods.getPastEvents(dispatchNewTx);
-    console.log(transactions);
-    setIsFetching(false);
-  };
+    contractMethods.initEventListeners(dispatchNewTx);
+    setIsFetching(false)
+  }
 
   useEffect(async () => {
     getDepositRequestData();
     const isLoggedIn = await magic.user.isLoggedIn();
     if (isLoggedIn) {
-      if (props.contractMethods instanceof ContractMethods) {
-        contractMethods = props.contractMethods;
-      } else {
-        setLoadingMessage("Initializing the Blockchain connection...");
-        await contractMethods.init();
+      if(props.contractMethods instanceof ContractMethods){
+        contractMethods = props.contractMethods
+      }else {
+        setLoadingMessage("Initializing the Blockchain connection...")
+        await contractMethods.init()
         dispatch({
           type: "INIT_CONTRACT_METHODS",
           value: contractMethods,
         });
       }
-      await onRefresh();
+      await onRefresh()
     }
   }, [props.contractMethods]);
+  const makeOneViewable = (tx) => {
+    let newTX = tx;
+    newTX._id = tx.id;
+    newTX.stars = 0;
+    newTX.type = tx.txType;
+    return newTX
+  }
   const makeViewable = (_transactions) => {
     let newTXs = [];
-    _transactions.forEach((tx) => {
-      let newTX = tx;
-      newTX._id = tx.id;
-      newTX.stars = 0;
-      newTX.type = tx.txType;
-      newTXs.push(newTX);
-    });
+    _transactions.forEach((tx) => newTXs.push(makeOneViewable(tx)));
     return newTXs;
   };
 
@@ -149,7 +175,7 @@ const HomeScreen = (props) => {
 
         {makeViewable(transactions).length === 0 ? (
           <View style={styles.wrapper}>
-            {isFetching ? <Text>{loadingMessage}</Text> : <></>}
+            {isFetching? <Text>{loadingMessage}</Text> : <></>}
             <Image source={HOME_EMPTY} style={styles.image} />
             <Text style={styles.text}>
               All requests have been fullfilled. Take a break, get some air,
@@ -327,7 +353,7 @@ const mapStateToProps = (state) => {
   return {
     magic: state.magic,
     transactions: state.transactions,
-    contractMethods: state.contractMethods,
+    contractMethods: state.contractMethods
   };
 };
 const mapDispatchToProps = (dispatch) => {

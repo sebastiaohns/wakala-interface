@@ -1,11 +1,10 @@
-import React, { Fragment, useRef, useState, useCallback } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import {
   Image,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -15,7 +14,6 @@ import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 
 import ContractMethods from "../../utils/celo-integration/ContractMethods";
-import FloatingDialog from "../../components/FloatingDialog";
 import SwipeButton from "../../components/SwipeButton";
 import ScreenCmpt from "../../components/ScreenCmpt";
 import NavHeader from "../../components/NavHeader";
@@ -81,28 +79,26 @@ const ModalContent = (props) => {
 const ConfirmFunds = (props) => {
   const route = useRoute();
   const modalRef = useRef();
-  const floatingDialogRef = useRef();
   const navigation = useNavigation();
 
   const value = route.params.value;
   const operation = route.params.operation;
 
   const [isActionSuccess, setIsActionSuccess] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const handleAction = async () => {
     openModal();
     //Init
     setIsLoading(true);
     setLoadingMessage("Initializing the transaction...");
-    let contractMethods = new ContractMethods(props.magic);
-    if (props.contractMethods instanceof ContractMethods) {
-      contractMethods = props.contractMethods;
-    } else {
-      setLoadingMessage("Initializing the Blockchain connection...");
-      await contractMethods.init();
+    let contractMethods = new ContractMethods(props.magic)
+    if(props.contractMethods instanceof ContractMethods){
+      contractMethods = props.contractMethods
+    }else {
+      setLoadingMessage("Initializing the Blockchain connection...")
+      await contractMethods.init()
       dispatch({
         type: "INIT_CONTRACT_METHODS",
         value: contractMethods,
@@ -160,48 +156,6 @@ const ConfirmFunds = (props) => {
     });*/
   };
 
-  const openDialog = () => {
-    floatingDialogRef.current?.openDialog();
-    setIsDialogOpen(true);
-  };
-
-  const closeDialog = () => {
-    floatingDialogRef.current?.closeDialog();
-    setIsDialogOpen(false);
-  };
-
-  const handleDialog = () => {
-    if (isDialogOpen) {
-      closeDialog();
-    } else {
-      openDialog();
-    }
-  };
-
-  const useViewSize = () => {
-    const [size, setSize] = useState(null);
-
-    const onLayout = useCallback((event) => {
-      const { x, y, width, height } = event.nativeEvent.layout;
-      setSize({ x, y, width, height });
-    }, []);
-
-    return [size, onLayout];
-  };
-
-  const useTextSize = () => {
-    const [size, setSize] = useState(null);
-
-    const onLayout = useCallback((event) => {
-      const { x, y, width, height } = event.nativeEvent.layout;
-      setSize({ x, y, width, height });
-    }, []);
-
-    return [size, onLayout];
-  };
-
-  const [viewSize, onViewLayout] = useViewSize();
-  const [textSize, onTextLayout] = useTextSize();
 
   return (
     <Fragment>
@@ -228,42 +182,13 @@ const ConfirmFunds = (props) => {
               <View style={styles.descriptionContainer}>
                 <View
                   style={{ flexDirection: "row", alignItems: "flex-start" }}
-                  onLayout={onViewLayout}
                 >
-                  <Text style={styles.feesText} onLayout={onTextLayout}>
-                    Estimated Fees{" "}
-                  </Text>
-                  <TouchableOpacity
-                    style={{
-                      position: "absolute",
-                      top: viewSize ? viewSize.x + viewSize.height - 49 : 0,
-                      left: textSize ? textSize.width : 0,
-                    }}
-                    onPress={handleDialog}
-                  >
-                    <Feather name="info" size={11} color="#222222" />
-                  </TouchableOpacity>
+                  <Text style={styles.feesText}>Estimated Fees </Text>
+                  <Feather name="info" size={11} color="#222222" />
                 </View>
 
                 <Text style={styles.receivesText}>Total you receive</Text>
               </View>
-
-              <FloatingDialog
-                ref={floatingDialogRef}
-                posX={viewSize ? viewSize.x + 15 : 0}
-                posY={textSize ? textSize.width - 30 : 0}
-                content={
-                  <Text>
-                    Small fee necessary.... To learn more about fees, visit{" "}
-                    <Text
-                      style={{ color: "blue" }}
-                      onPress={() => Linking.openURL("wakala.xyz/fees.")}
-                    >
-                      wakala.xyz/fees.
-                    </Text>
-                  </Text>
-                }
-              />
 
               <View style={styles.AmountContainer}>
                 <MaskedValue style={styles.feesText} value={value * 0.0001} />
@@ -284,7 +209,7 @@ const ConfirmFunds = (props) => {
         style={isActionSuccess ? { height: 510 } : { height: 490 }}
         content={
           isLoading ? (
-            <ModalLoading loadingMessage={loadingMessage} />
+              <ModalLoading loadingMessage={loadingMessage} />
           ) : (
             <ModalContent
               handleAction={closeModal}
@@ -412,7 +337,7 @@ const modalStyles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     magic: state.magic,
-    contractMethods: state.contractMethods,
+    contractMethods: state.contractMethods
   };
 };
 const mapDispatchToProps = (dispatch) => {
