@@ -42,6 +42,10 @@ const CustomDrawer = (props) => {
   const [loadingMessage, setLoadingMessage] = useState("");
 
   function pickFlag() {
+    if (!phone) {
+      return;
+    }
+
     let len = 4;
     while (len > 0) {
       let country_code = phone.substring(0, len);
@@ -67,7 +71,7 @@ const CustomDrawer = (props) => {
       setloading(true);
       setLoadingMessage("Getting user's Metadata...");
       let userMetadata = await magic.user.getMetadata();
-
+      setPhone(userMetadata.phoneNumber);
       let { publicAddress } = userMetadata;
       dispatch({
         type: "UPDATE_USER_METADATA",
@@ -94,11 +98,11 @@ const CustomDrawer = (props) => {
       setCUSD(amount);
       setKSH(amount);
       setloading(false);
-      pickFlag();
     } catch (error) {
       alert(error);
       setloading(false);
     }
+    pickFlag();
   }, []);
 
   return (
@@ -157,7 +161,7 @@ const CustomDrawer = (props) => {
           label={"Governance"}
           handleAction={() => navigation.navigate("Governance")}
         />
-        <DrawerElement label={"Ramp"} handleAction={pickFlag} />
+        <DrawerElement label={"Ramp"} />
         <DrawerElement
           label={"Settings"}
           handleAction={() => navigation.navigate("Settings")}
